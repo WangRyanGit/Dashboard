@@ -1,0 +1,154 @@
+syntax = "proto2";
+option java_package = "com.apple.ios.protos";
+option java_outer_classname = "DataProto";
+
+message AdStrategy{
+    optional int32 adType = 1;   //广告类型
+    optional int32 adSource = 2;    //来源
+    optional int32 priority = 3;    //优先级（数字越小，优先级越高）
+    optional string adID = 4;   //广告id
+    optional int32 positionID = 5;  //广告位编号
+    optional int32 adreward = 6; //广告是否是奖励类型（0为非奖励，1为奖励）
+}
+
+message AdControl{
+    optional int32 init = 1;
+    optional int32 show = 2;
+    optional int32 positionID = 3;
+    optional int32 requestIntervalTime = 4;
+    optional int32 status = 5;
+}
+
+message AdClick{
+    optional int32 positionID = 1;  //广告位编号
+    optional string minClick = 2;   //最小点击
+    optional string maxClick = 3;   //最大点击
+}
+
+message AdResources{
+    optional string soundKey = 1;  //sound cloud key
+    optional string jamKey = 2;  //Jam key
+    optional string type = 3;  //1为 sound cloud - 2为Jam
+}
+
+message UserRegistrationRequest{
+    optional string geo = 1;   //注册国家
+    optional string os = 2;    //平台
+    optional string idfa= 3;   //唯一标示
+    optional string bundleId = 4;   //包名
+    optional string bundleDisplayName = 5;   //应用名
+    optional string build = 6;   //编译的版本号
+    optional string version = 7;   //应用软件版本
+}
+
+message UserRegistrationResponse{
+    optional int64 timeStamp = 1;   //注册时间戳
+    optional string userId = 2;     //用户id
+}
+
+message AdShowStrategyRequest{
+    optional int64 timeStamp = 1;   //注册时间戳
+    optional string geo = 2;   //注册国家
+    optional string idfa= 3;   //唯一标示
+    optional string bundleId = 4;   //包名
+    optional string bundleDisplayName = 5;   //应用名
+    optional string build = 6;   //编译的版本号
+    optional string version = 7;   //应用软件版本
+}
+
+message AdShowStrategyResponse{
+    repeated AdStrategy adStrategyList = 1;
+    repeated AdControl adControlList = 2;
+    repeated AdClick adClickList = 3;
+    repeated AdResources adResourcesList = 4;
+    optional int64 serverTime = 5;
+}
+
+message DataStatisticsRequest{
+    optional string geo = 1;   //国家
+    optional string bundleId = 2;   //包名
+    optional string bundleDisplayName = 3;   //应用名
+    optional string build = 4;   //编译的版本号
+    optional string version = 5;   //应用软件版本
+    optional string networkType = 6;    //网络类型
+    optional string idfa= 7;   //唯一标示
+    optional int32 eventNumber = 8;    //事件编号（应用启动、页面切换、广告请求、广告展示、广告点击）
+    repeated eventApplicationStartup applicationStartupList = 9;
+    repeated eventPageSwitching pageSwitchingList = 10;
+    repeated eventAdRequest adRequestList = 11;
+    repeated eventAdShow adShowList = 12;
+    repeated eventAdClick adClickList = 13;
+    optional int64 timeStamp = 14;   //注册时间戳
+}
+
+message DataStatisticsResponse{
+    optional string success = 1;  //返回ok表示成功
+    optional bool status = 2;   //状态200表示成功
+}
+
+message eventApplicationStartup{
+    optional string geo = 1;   //国家
+    optional int64 timeStartup = 2;   //启动应用时间
+}
+
+message eventPageSwitching{
+    optional string pageName = 1;   //页面名字
+    optional string geo = 2;   //国家
+    optional int64 timeSwitching = 3;   //切换页面时间
+}
+
+message eventAdRequest{
+    optional string geo = 1;   //国家
+    optional int64 timeRequest = 2;   //广告请求时间
+    optional int32 adPositionNumber = 3;   //广告位编号
+    optional int32 adType = 4;   //广告类型
+}
+
+message eventAdShow{
+    optional string geo = 1;   //国家
+    optional int64 timeShow = 2;   //广告展示时间
+    optional int32 adPositionNumber = 3;   //广告位编号
+    optional int32 adType = 4;   //广告类型
+}
+
+message eventAdClick{
+    optional string geo = 1;   //国家
+    optional int64 timeClick = 2;   //广告点击时间
+    optional int32 adPositionNumber = 3;   //广告位编号
+    optional int32 adType = 4;   //广告类型
+}
+
+message AdSendPushRequest{
+    optional int64 timeStamp = 1;   //注册时间戳
+    optional string geo = 2;   //注册国家
+    optional string idfa= 3;   //唯一标示
+    optional string bundleId = 4;   //包名
+    optional string bundleDisplayName = 5;   //应用名
+    optional string build = 6;   //编译的版本号
+    optional string version = 7;   //应用软件版本
+    optional string deviceToken = 8;    //iphone的deviceToken
+    optional int32 isUninstall = 9;    //1为卸载
+}
+
+message AdSendPushResponse{
+    optional int64 sendTime = 1;    //回传时间
+    optional string success = 2;  //返回ok表示成功
+}
+
+message Apps{
+    optional string bundleId = 1;   //包名
+    optional string version = 2;   //应用软件版本
+    optional string url = 3;   //app store 下载地址
+    optional string icon = 4;   //icon图标
+}
+
+message AppsRequest{
+    optional string bundleId = 1;   //包名
+    optional string version = 2;   //应用软件版本
+}
+
+message AppsResponse{
+    repeated Apps AppsList = 1;     //APP列表
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}

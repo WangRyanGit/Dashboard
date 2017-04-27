@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:web="http://java.sun.com/xml/ns/javaee" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+     <!--springMVC核心配置-->
+    <servlet>
+        <servlet-name>dispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <!--spingMVC的配置路径  -->
+            <param-value>classpath:conf/spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- 拦截设置 -->
+    <servlet-mapping>
+        <servlet-name>dispatcherServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- 错误跳转页面 -->
+    <error-page>
+        <!-- 路径不正确 -->
+        <error-code>404</error-code>
+        <location>/WEB-INF/admin/404.jsp</location>
+    </error-page>
+    <error-page>
+        <!-- 没有访问权限，访问被禁止 -->
+        <error-code>405</error-code>
+        <location>/WEB-INF/admin/404.jsp</location>
+    </error-page>
+    <error-page>
+        <!-- 内部错误 -->
+        <error-code>500</error-code>
+        <location>/WEB-INF/admin/404.jsp</location>
+    </error-page>
+
+    <servlet>
+        <servlet-name>api</servlet-name>
+        <servlet-class>com.ibb.control.ApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>api</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>vpn</servlet-name>
+        <servlet-class>com.ibb.control.VpnServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>vpn</servlet-name>
+        <url-pattern>/vpn/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>youtb</servlet-name>
+        <servlet-class>com.ibb.control.YouTbServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>youtb</servlet-name>
+        <url-pattern>/youtb/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>color</servlet-name>
+        <servlet-class>com.ibb.control.ColorServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>color</servlet-name>
+        <url-pattern>/color/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>follow</servlet-name>
+        <servlet-class>com.ibb.control.FollowServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>follow</servlet-name>
+        <url-pattern>/follow/*</url-pattern>
+    </servlet-mapping>
+</web-app>

@@ -1,0 +1,315 @@
+syntax = "proto2";
+option java_package = "com.apple.ios.protos";
+option java_outer_classname = "VpnProto";
+
+message VpnServers{
+    optional string country = 1;   //vpn地区
+    optional string server_load = 2;    //vpn渠道来源
+    optional string ip = 3;    //ip地址
+    optional string flagurl = 4;    //国旗地址
+    optional string free = 5;   //判断是否免费
+}
+
+message VpnConfig{
+    optional string psk = 1;        //秘钥
+    optional string eap_user = 2;       //user
+    optional string remote_id = 3;      //远程id
+    optional string eap_passwd = 4;     //pass
+    optional string local_id = 5;       //本地id
+    optional string type = 6;      //类型
+    optional int32 id = 7;  //秘钥编号
+}
+
+message VpnServersRequest{
+    optional string geo = 1;   //注册国家
+    optional string idfa= 2;   //唯一标示
+    optional string bundleId = 3;   //包名
+}
+
+
+message VpnServersResponse{
+    repeated VpnServers VpnServersList = 1;
+    repeated VpnConfig VpnConfigList = 2;
+    optional string status = 3;     //返回状态 ok表示成功 no表示失败
+    optional int64 serverTime = 4;      //返回时间
+}
+
+message VpnUsers{
+    optional int64 id = 1;  //用户id
+    optional string username = 2;    //用户名
+    optional string password = 3;   //用户密码
+    optional string bundleId = 4;    //应用
+    optional string regtime = 5;    //注册时长
+}
+
+message VpnRegisterRequest{
+    optional string bundleId = 1;    //那个应用
+    optional string username = 2;   //用户名
+    optional string password = 3;   //密码
+    optional string idfa = 4;
+    optional string geo = 5;
+    optional string begintime = 6;  //开始时间
+}
+
+message VpnRegisterResponse{
+    optional string status = 1;     //状态
+    optional int64 time = 2;    //时间
+}
+
+message VpnLoginRequest{
+    optional string bundleId = 1;    //那个应用
+    optional string username = 2;   //用户名
+    optional string password = 3;   //密码
+    optional string idfa = 4;
+    optional string geo = 5;
+}
+
+message VpnLoginResponse{
+    repeated VpnUsers VpnUsersList = 1;     //用户信息（用户表）
+    repeated VpnSign VpnSignList = 2;     //用户信息(签到表)
+    repeated VpnVerify VpnVerifyList = 3;      //IAP校验表
+    optional string status = 4;     //状态
+    optional int64 time = 5;    //时间
+}
+
+message VpnCodeRequest{
+    optional string bundleId = 1;    //那个应用
+    optional string username = 2;   //用户名
+    optional string idfa = 4;
+    optional string geo = 5;
+}
+
+message VpnCodeResponse{
+    optional string verifyCode = 1;     //验证码
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}
+
+message VpnChangeRequest{
+    optional string bundleId = 1;    //那个应用
+    optional string username = 2;   //用户名
+    optional string newpassword = 3;    //用户更改后的密码
+    optional string idfa = 4;
+    optional string geo = 5;
+}
+
+message VpnChangeResponse{
+    repeated VpnUsers VpnUsersList = 1;     //用户信息（用户表）
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}
+
+message VpnPayRequest{
+    optional string bundleId = 1;    //那个应用
+    optional int64 id = 2;  //回传ID唯一标示
+    optional string idfa = 3;
+    optional string geo = 4;
+    optional string regtime = 5;     //注册时长1、3、6、12
+    optional string begintime= 6;   //开始时间
+}
+
+message VpnPayResponse{
+    repeated VpnUsers VpnUsersList = 1;     //用户信息（用户表）
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}
+
+message VpnSign{
+    optional int64 id = 1;  //sign表id
+    optional string bundleId = 2;    //应用
+    optional int64 userId = 3;   //用户id
+    optional string begintime = 4;  //开始时间
+    optional string type = 5;    //sign签到 try试用
+    optional string endtime = 6;    //结束时间
+}
+
+message VpnSignRequest{
+    optional string bundleId = 1;    //那个应用
+    optional int64 userId = 2;  //回传ID唯一标示
+    optional string idfa = 3;
+    optional string geo = 4;
+    optional string type = 5;     //sign签到 try试用
+    optional string begintime= 6;   //签到开始时间
+}
+
+message VpnSignResponse{
+    repeated VpnSign VpnSignList = 1;     //用户信息(签到表)
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}
+
+message VpnEventRequest{
+    optional string bundleId = 1;    //那个应用
+    optional int64 userId = 2;  //回传ID唯一标示
+    optional string idfa = 3;
+    optional string geo = 4;
+}
+
+message VpnEventResponse{
+    repeated VpnSign VpnSignList = 1;     //用户信息(签到表)
+    repeated VpnUsers VpnUsersList = 2;      //用户信息（用户表）
+    repeated VpnVerify VpnVerifyList = 3;      //IAP校验表
+    optional string status = 4;     //状态
+    optional int64 time = 5;    //时间
+}
+
+message VpnAppleId{
+    optional int64 id = 1;  //
+    optional string bundleId = 2;    //应用
+    optional string appleid = 3;    //苹果id
+}
+
+message VpnAppleIdRequest{
+    optional string geo = 1;   //注册国家
+    optional string idfa= 2;   //唯一标示
+    optional string bundleId = 3;   //包名
+}
+
+message VpnAppleIdResponse{
+    repeated VpnAppleId VpnAppleIdList = 1;     //appleid表
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}
+
+message VpnVerify{
+    optional string bundleId = 1;    //应用
+    optional int64 userId = 2;  //用户id
+    optional string quantity = 3;   //数量
+    optional string product_id = 4;    //产品ID
+    optional string purchase_date = 5;    //交易日期（时间戳）
+    optional string expires_date = 6;  //到期日期（时间戳）
+    optional string md5_receipt = 7;    //拿到收据的MD5
+}
+
+message VpnIapVerifyRequest{
+    optional string bundleId = 1;    //那个应用
+    optional int64 userId = 2;  //回传ID唯一标示
+    optional string geo = 3;
+    optional string voucher = 4;    //付费凭证(base64 以后的)
+    optional string regtime = 5;    //注册时长
+}
+
+message VpnIapVerifyResponse{
+    repeated VpnVerify VpnVerifyList = 1;      //IAP校验表
+    optional string status = 2;     //状态
+    optional int64 time = 3;    //时间
+}
+
+//广告
+message AdStrategy{
+    optional int32 adType = 1;   //广告类型
+    optional int32 adSource = 2;    //来源
+    optional int32 priority = 3;    //优先级（数字越小，优先级越高）
+    optional string adID = 4;   //广告id
+    optional int32 positionID = 5;  //广告位编号
+    optional int32 adreward = 6; //广告是否是奖励类型（0为非奖励，1为奖励）
+}
+
+message AdControl{
+    optional int32 init = 1;
+    optional int32 show = 2;
+    optional int32 positionID = 3;
+    optional int32 requestIntervalTime = 4;
+    optional int32 status = 5;
+}
+
+message AdClick{
+    optional int32 positionID = 1;  //广告位编号
+    optional string minClick = 2;   //最小点击
+    optional string maxClick = 3;   //最大点击
+}
+
+message AdResources{
+    optional string soundKey = 1;  //sound cloud key
+    optional string jamKey = 2;  //Jam key
+    optional string type = 3;  //1为 sound cloud - 2为Jam
+}
+
+message VpnStrategyRequest{
+    optional int64 timeStamp = 1;   //注册时间戳
+    optional string geo = 2;   //注册国家
+    optional string idfa= 3;   //唯一标示
+    optional string bundleId = 4;   //包名
+    optional string bundleDisplayName = 5;   //应用名
+    optional string build = 6;   //编译的版本号
+    optional string version = 7;   //应用软件版本
+}
+
+message VpnStrategyResponse{
+    repeated AdStrategy adStrategyList = 1;
+    repeated AdControl adControlList = 2;
+    repeated AdClick adClickList = 3;
+    repeated AdResources adResourcesList = 4;
+    optional int64 serverTime = 5;
+}
+
+message VpnDataRequest{
+    optional string geo = 1;   //国家
+    optional string bundleId = 2;   //包名
+    optional string bundleDisplayName = 3;   //应用名
+    optional string build = 4;   //编译的版本号
+    optional string version = 5;   //应用软件版本
+    optional string networkType = 6;    //网络类型
+    optional string idfa= 7;   //唯一标示
+    optional int32 eventNumber = 8;    //事件编号（应用启动、页面切换、广告请求、广告展示、广告点击）
+    repeated eventApplicationStartup applicationStartupList = 9;
+    repeated eventPageSwitching pageSwitchingList = 10;
+    repeated eventAdRequest adRequestList = 11;
+    repeated eventAdShow adShowList = 12;
+    repeated eventAdClick adClickList = 13;
+    optional int64 timeStamp = 14;   //注册时间戳
+}
+
+message VpnDataResponse{
+    optional string success = 1;  //返回ok表示成功
+    optional bool status = 2;   //状态200表示成功
+}
+
+message eventApplicationStartup{
+    optional string geo = 1;   //国家
+    optional int64 timeStartup = 2;   //启动应用时间
+}
+
+message eventPageSwitching{
+    optional string pageName = 1;   //页面名字
+    optional string geo = 2;   //国家
+    optional int64 timeSwitching = 3;   //切换页面时间
+}
+
+message eventAdRequest{
+    optional string geo = 1;   //国家
+    optional int64 timeRequest = 2;   //广告请求时间
+    optional int32 adPositionNumber = 3;   //广告位编号
+    optional int32 adType = 4;   //广告类型
+}
+
+message eventAdShow{
+    optional string geo = 1;   //国家
+    optional int64 timeShow = 2;   //广告展示时间
+    optional int32 adPositionNumber = 3;   //广告位编号
+    optional int32 adType = 4;   //广告类型
+}
+
+message eventAdClick{
+    optional string geo = 1;   //国家
+    optional int64 timeClick = 2;   //广告点击时间
+    optional int32 adPositionNumber = 3;   //广告位编号
+    optional int32 adType = 4;   //广告类型
+}
+
+message VpnPushRequest{
+    optional int64 timeStamp = 1;   //注册时间戳
+    optional string geo = 2;   //注册国家
+    optional string idfa= 3;   //唯一标示
+    optional string bundleId = 4;   //包名
+    optional string bundleDisplayName = 5;   //应用名
+    optional string build = 6;   //编译的版本号
+    optional string version = 7;   //应用软件版本
+    optional string deviceToken = 8;    //iphone的deviceToken
+    optional int32 isUninstall = 9;    //1为卸载
+}
+
+message VpnPushResponse{
+    optional int64 sendTime = 1;    //回传时间
+    optional string success = 2;  //返回ok表示成功
+}

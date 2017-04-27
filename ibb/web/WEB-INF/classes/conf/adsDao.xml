@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<bean id="dsIbb" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+		<property name="driver">
+			<value>${mysql.driver}</value>
+		</property>
+		<property name="driverUrl">
+			<value>${mysql.adsurl}</value>
+		</property>
+		<property name="user" value="${mysql.username}" />
+		<property name="password" value="${mysql.password}" />
+		<property name="alias" value="Ibb" />
+		<property name="maximumActiveTime" value="${mysql.maxActiveTime}" />
+		<property name="maximumConnectionCount" value="${mysql.maxConnCount}" />
+		<property name="minimumConnectionCount" value="${mysql.minConnCount}" />
+		<property name="simultaneousBuildThrottle" value="${mysql.buildThrottle}" />
+		<property name="houseKeepingTestSql" value="${mysql.keepTestSql}" />
+	</bean>
+
+    <!--  color dao  开始  -->
+    <bean id="dColorPhotosDao" class="com.ibb.dao.ColorPhotosDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <!--  vpn dao  开始  -->
+
+    <!--  vpn dao  开始  -->
+    <bean id="dVpnServersDao" class="com.ibb.dao.VpnServersDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dVpnConfigDao" class="com.ibb.dao.VpnConfigDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dVpnUsersDao" class="com.ibb.dao.VpnUsersDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dVpnSignDao" class="com.ibb.dao.VpnSignDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dVpnAppleIdDao" class="com.ibb.dao.VpnAppleIdDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dVpnPurchaseDao" class="com.ibb.dao.VpnPurchaseDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+
+    <!--  vpn dao  结束  -->
+
+    <!--  follow dao  开始  -->
+
+    <bean id="dVFollowPurchaseDao" class="com.ibb.dao.FollowPurchaseDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+
+    <!--  follow dao  结束  -->
+
+    <!--  music YouTube follow dao  开始  -->
+    <bean id="dAdTokensDao" class="com.ibb.dao.AdTokensDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dAdPushDao" class="com.ibb.dao.AdPushDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dAdResourcesDao" class="com.ibb.dao.AdResourcesDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dClickDao" class="com.ibb.dao.AdClickDao">
+        <property name="dataSource">
+            <ref local="dsIbb"></ref>
+        </property>
+    </bean>
+    <bean id="dadStrategyDao" class="com.ibb.dao.AdStrategyDao">
+        <property name="dataSource">
+            <ref local="dsIbb" />
+        </property>
+    </bean>
+    <bean id="dadControlDao" class="com.ibb.dao.AdControlDao">
+        <property name="dataSource">
+            <ref local="dsIbb" />
+        </property>
+    </bean>
+    <bean id="dAppsDao" class="com.ibb.dao.AppsDao">
+        <property name="dataSource">
+            <ref local="dsIbb" />
+        </property>
+    </bean>
+
+    <!--  music YouTube dao  结束  -->
+    <!--  adminuser dao  begin  -->
+    <bean id="dAdminUserDao" class="com.web.dao.AdminUserDao">
+        <property name="dataSource">
+            <ref local="dsIbb" />
+        </property>
+    </bean>
+    <!--  adminuser dao  end  -->
+
+    <bean id="bSpringHelper" class="com.util.SpringHelper"></bean>
+</beans>

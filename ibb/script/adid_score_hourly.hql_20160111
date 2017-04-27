@@ -1,0 +1,399 @@
+use oversealogs;
+set hive.auto.convert.join=false;
+set hive.exec.dynamic.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+set hive.exec.max.dynamic.partitions=50000;
+set hive.exec.max.dynamic.partitions.pernode=50000;
+set hive.exec.max.created.files=500000;      
+
+-----1)install
+alter table user_ad_logs_hourly add if not exists partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}') location 's3://ngemobi/logs/user_ad_logs/hourly/dt=${hiveconf:START_DATE}/hour=${hiveconf:HOUR}/';
+insert overwrite table oversealogs.s_adid_install_rank_score_hourly partition
+  (dt = '${hiveconf:START_DATE}', hour = '${hiveconf:HOUR}')
+  select bb.rank_num,
+         aa.req_type,
+         aa.adid,
+         aa.install_num,
+         (bb.rank_num - 1) as score
+    from (select req_type, adid, count(s_time) as install_num
+            from oversealogs.user_ad_logs_hourly
+           where dt = '${hiveconf:START_DATE}'
+             and hour = '${hiveconf:HOUR}'
+             and adid is not null
+             and req_type = 4
+             and is_push=0
+           group by req_type, adid) aa
+    left outer join (select mm.install_num,
+                            row_number() over(partition by 1 ORDER BY mm.install_num asc) as rank_num
+                       from (select install_num
+                               from (select adid, count(s_time) as install_num
+                                       from oversealogs.user_ad_logs_hourly
+                                      where dt = '${hiveconf:START_DATE}'
+                                        and hour = '${hiveconf:HOUR}'
+                                        and adid is not null
+                                        and req_type = 4
+                                        and is_push=0
+                                      group by adid) nn
+                              group by install_num) mm) bb
+      on (aa.install_num = bb.install_num);
+
+----2)postback
+use oversealogs;
+alter table postback_logs_hourly add if not exists partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}') location 's3://ngemobi/logs/postback_logs/hourly/dt=${hiveconf:START_DATE}/hour=${hiveconf:HOUR}/';
+
+insert overwrite table oversealogs.s_adid_postback_rank_score_hourly 
+partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+select bb.rank_num, aa.adid, aa.postback_num, bb.rank_num - 1 as score
+  from (select adid, count(s_time) as postback_num
+          from oversealogs.postback_logs_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}'
+           and adid is not null
+         group by adid) aa
+  left outer join (select mm.postback_num,
+                          row_number() over(partition by 1 ORDER BY mm.postback_num asc) as rank_num
+                     from (select postback_num
+                             from (select adid, count(s_time) as postback_num
+                                     from oversealogs.postback_logs_hourly
+                                    where dt = '${hiveconf:START_DATE}'
+                                      and hour = '${hiveconf:HOUR}'
+                                      and adid is not null
+                                    group by adid) nn
+                            group by postback_num) mm) bb
+    on (aa.postback_num = bb.postback_num);
+
+----3)provider
+insert overwrite table oversealogs.s_adid_provider_weight_hourly
+partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+select row_number() over(partition by 1 ORDER BY b.weight asc) as rank_num,
+       a.id as adid,
+       b.weight
+  from (select *
+          from overseaads.o_ad_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}'
+           and status = 0) a
+  join (select *
+          from overseaads.o_provider_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}') b
+    on (a.provider = b.id);
+
+
+insert overwrite table oversealogs.s_adid_provider_rank_score_hourly 
+partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+    select t1.rank_num,
+           t2.grp_rank_num,
+           t2.grp_min_rank,
+           t1.adid,
+           t1.weight,
+           case
+             when (t2.grp_rank_num = 1 or t1.weight = 0 or t1.weight is null) then
+              0
+             else
+              (t2.grp_min_rank - 1) * 1
+           end as score
+      from (select adid, weight, rank_num
+              from oversealogs.s_adid_provider_weight_hourly
+             where dt = '${hiveconf:START_DATE}'
+               and hour = '${hiveconf:HOUR}') t1
+      left outer join (select bb.grp_rank_num,
+                              aa.weight,
+                              min(aa.rank_num) as grp_min_rank
+                         from (select adid, weight, rank_num
+                                 from oversealogs.s_adid_provider_weight_hourly
+                                where dt = '${hiveconf:START_DATE}'
+                                  and hour = '${hiveconf:HOUR}') aa
+                         left outer join (select mm.weight,
+                                                row_number() over(partition by 1 ORDER BY mm.weight asc) as grp_rank_num
+                                           from (select weight
+                                                   from oversealogs.s_adid_provider_weight_hourly
+                                                  where dt =
+                                                        '${hiveconf:START_DATE}'
+                                                    and hour =
+                                                        '${hiveconf:HOUR}'
+                                                  group by weight) mm) bb
+                           on (aa.weight = bb.weight)
+                        group by bb.grp_rank_num, aa.weight) t2 on(t1.weight=t2.weight);
+ 
+----4)price
+insert overwrite table oversealogs.s_adid_price_rank_score_hourly 
+partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+    select t1.rank_num,
+           t2.grp_rank_num,
+           t2.grp_min_rank,
+           t1.adid,
+           t1.price,
+           case
+             when (t2.grp_rank_num = 1 or t1.price = 0 or t1.price is null) then
+              0
+             else
+              (t2.grp_min_rank - 1) * 1
+           end as score
+      from (select id as adid,
+                   price,
+                   row_number() over(partition by 1 ORDER BY price asc) as rank_num
+              from overseaads.o_ad_hourly
+             where dt = '${hiveconf:START_DATE}'
+               and hour= '${hiveconf:HOUR}'
+               and status = 0) t1
+      left outer join (select bb.grp_rank_num,
+                              aa.price,
+                              min(aa.rank_num) as grp_min_rank
+                         from (select id as adid,
+                                      price,
+                                      row_number() over(partition by 1 ORDER BY price asc) as rank_num
+                                 from overseaads.o_ad_hourly
+                                where dt = '${hiveconf:START_DATE}'
+                                  and hour= '${hiveconf:HOUR}'
+                                  and status=0 ) aa
+                         left outer join (select mm.price,
+                                                row_number() over(partition by 1 ORDER BY mm.price asc) as grp_rank_num
+                                           from (select price
+                                                   from overseaads.o_ad_hourly
+                                                  where dt ='${hiveconf:START_DATE}'
+                                                    and hour= '${hiveconf:HOUR}'
+                                                    and status = 0
+                                                  group by price) mm) bb
+                           on (aa.price = bb.price)
+                        group by bb.grp_rank_num, aa.price) t2
+        on (t1.price = t2.price);
+-----5)preweight                                              
+insert overwrite table oversealogs.s_adid_preweight_rank_score_hourly 
+partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+    select t1.rank_num,
+           t2.grp_rank_num,
+           t2.grp_min_rank,
+           t1.adid,
+           t1.preweight,
+           case
+             when (t2.grp_rank_num = 1 or t1.preweight = 0 or t1.preweight is null) then
+              0
+             else
+              t1.preweight*1
+           end as score
+      from (select id as adid,
+                   preweight,
+                   row_number() over(partition by 1 ORDER BY preweight asc) as rank_num
+              from overseaads.o_ad_hourly
+             where dt = '${hiveconf:START_DATE}'
+               and hour= '${hiveconf:HOUR}'
+               and status = 0) t1
+      left outer join (select bb.grp_rank_num,
+                              aa.preweight,
+                              min(aa.rank_num) as grp_min_rank
+                         from (select id as adid,
+                                      preweight,
+                                      row_number() over(partition by 1 ORDER BY preweight asc) as rank_num
+                                 from overseaads.o_ad_hourly
+                                where dt = '${hiveconf:START_DATE}'
+                                  and hour= '${hiveconf:HOUR}'
+                                  and status=0 ) aa
+                         left outer join (select mm.preweight,
+                                                row_number() over(partition by 1 ORDER BY mm.preweight asc) as grp_rank_num
+                                           from (select preweight
+                                                   from overseaads.o_ad_hourly
+                                                  where dt ='${hiveconf:START_DATE}'
+                                                    and hour= '${hiveconf:HOUR}'
+                                                    and status = 0
+                                                  group by preweight) mm) bb
+                           on (aa.preweight = bb.preweight)
+                        group by bb.grp_rank_num, aa.preweight) t2
+        on (t1.preweight = t2.preweight);
+
+----6)conversion
+insert overwrite table oversealogs.s_adid_cr_pb_install_hourly partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+select row_number() over(partition by 1 ORDER BY aa.cr asc) as rank_num,
+       aa.adid,
+       aa.postback_num,
+       aa.install_num,
+       aa.cr
+  from (select t1.adid,
+               nvl(t2.postback_num, 0) as postback_num,
+               t1.install_num,
+               case
+                 when t1.install_num = 0 then
+                  0.0
+                 else
+                  round(nvl(t2.postback_num, 0.0) / t1.install_num, 4)
+               end as cr
+          from (select aa.adid, aa.install_num
+                  from (select a1.adid, sum(a1.install_num) as install_num
+                          from (select adid, install_num
+                                  from oversealogs.s_adid_install_rank_score_hourly
+                                 where dt = '${hiveconf:START_DATE}'
+                                   and hour <= '${hiveconf:HOUR}'
+                                union all
+                                select adid, install_num
+                                  from oversealogs.s_adid_install_rank_score_hourly
+                                 where dt =
+                                       date_add('${hiveconf:START_DATE}', -1)
+                                   and hour >= '${hiveconf:FROM_HOUR}') a1
+                         group by a1.adid) aa
+                  left semi
+                  join (select id as adid
+                         from overseaads.o_ad_hourly
+                        where dt = '${hiveconf:START_DATE}'
+                          and hour = '${hiveconf:HOUR}'
+                          and status = 0) bb
+                    on (aa.adid = bb.adid)) t1
+          left outer join (select a1.adid,
+                                 sum(a1.postback_num) as postback_num
+                            from (select adid, postback_num
+                                    from oversealogs.s_adid_postback_rank_score_hourly
+                                   where dt = '${hiveconf:START_DATE}'
+                                     and hour <= '${hiveconf:HOUR}'
+                                  union all
+                                  select adid, postback_num
+                                    from oversealogs.s_adid_postback_rank_score_hourly
+                                   where dt = date_add('${hiveconf:START_DATE}',
+                                                       -1)
+                                     and hour >= '${hiveconf:FROM_HOUR}') a1
+                           group by a1.adid) t2
+            on (t1.adid = t2.adid)) aa;
+
+insert overwrite table oversealogs.s_adid_cr_rank_score_hourly partition
+  (dt = '${hiveconf:START_DATE}', hour = '${hiveconf:HOUR}')
+  select t1.rank_num,
+         t2.grp_rank_num,
+         t2.grp_min_rank,
+         t1.adid,
+         t1.postback_num,
+         t1.install_num,
+         t1.cr,
+         case
+           when (t2.grp_rank_num = 1 or t1.cr = 0.0 or t1.cr is null) then
+            0
+           else
+            (t2.grp_min_rank - 1) * 5
+         end as score
+    from (select rank_num, adid, postback_num, install_num, cr
+            from oversealogs.s_adid_cr_pb_install_hourly
+           where dt = '${hiveconf:START_DATE}'
+             and hour = '${hiveconf:HOUR}') t1
+    left outer join (select bb.grp_rank_num,
+                            aa.cr,
+                            min(aa.rank_num) as grp_min_rank
+                       from (select adid, cr, rank_num
+                               from oversealogs.s_adid_cr_pb_install_hourly
+                              where dt = '${hiveconf:START_DATE}'
+                                and hour = '${hiveconf:HOUR}') aa
+                       left outer join (select mm.cr,
+                                              row_number() over(partition by 1 ORDER BY mm.cr asc) as grp_rank_num
+                                         from (select cr
+                                                 from oversealogs.s_adid_cr_pb_install_hourly
+                                                where dt =
+                                                      '${hiveconf:START_DATE}'
+                                                  and hour =
+                                                      '${hiveconf:HOUR}'
+                                                group by cr) mm) bb
+                         on (aa.cr = bb.cr)
+                      group by bb.grp_rank_num, aa.cr) t2
+      on (t1.cr = t2.cr);
+
+
+---7)cap 
+insert overwrite table oversealogs.s_adid_cap_install_hourly 
+partition(dt='${hiveconf:START_DATE}',hour='${hiveconf:HOUR}')
+select row_number() over(partition by 1 ORDER BY aa.cr desc) as rank_num,
+       aa.adid,
+       aa.cap,
+       aa.install_num,
+       aa.cr
+  from (select aa.adid,
+               aa.install_num,
+               bb.cap,
+               round(nvl(aa.install_num, 0.0) / bb.cap, 4) as cr
+          from (select adid, sum(install_num) as install_num
+                  from oversealogs.s_adid_install_rank_score_hourly
+                 where dt = '${hiveconf:START_DATE}'
+                   and hour <= '${hiveconf:HOUR}'
+                   group by adid) aa
+          join (select id as adid,
+                       case
+                        when (cap is null or cap = 0) then
+                         100000
+                        else
+                         cap
+                      end as cap
+                 from overseaads.o_ad_hourly
+                where dt = '${hiveconf:START_DATE}'
+                  and hour='${hiveconf:HOUR}'
+                  and status = 0) bb
+            on (aa.adid = bb.adid)) aa;
+            
+insert overwrite table oversealogs.s_adid_cap_rank_score_hourly partition
+  (dt = '${hiveconf:START_DATE}', hour = '${hiveconf:HOUR}')
+  select t1.rank_num,
+         t2.grp_rank_num,
+         t2.grp_min_rank,
+         t1.adid,
+         t1.cap,
+         t1.install_num,
+         t1.cr,
+         case
+           when (t1.cr = 0.0 or t1.cr is null) then
+            0
+           else
+            (t2.grp_min_rank - 1) * 5
+         end as score
+    from (select rank_num, adid, cap, install_num, cr
+            from oversealogs.s_adid_cap_install_hourly
+           where dt = '${hiveconf:START_DATE}'
+             and hour = '${hiveconf:HOUR}') t1
+    left outer join (select bb.grp_rank_num,
+                            aa.cr,
+                            min(aa.rank_num) as grp_min_rank
+                       from (select adid, cr, rank_num
+                               from oversealogs.s_adid_cap_install_hourly
+                              where dt = '${hiveconf:START_DATE}'
+                                and hour = '${hiveconf:HOUR}') aa
+                       left outer join (select mm.cr,
+                                               row_number() over(partition by 1 ORDER BY mm.cr asc) as grp_rank_num
+                                         from (select cr
+                                                 from oversealogs.s_adid_cap_install_hourly
+                                                where dt = '${hiveconf:START_DATE}'
+                                                  and hour = '${hiveconf:HOUR}'
+                                                group by cr) mm) bb
+                         on (aa.cr = bb.cr)
+                      group by bb.grp_rank_num, aa.cr) t2
+      on (t1.cr = t2.cr);
+
+----all_dim_core
+insert overwrite table oversealogs.s_adid_all_dim_score_hourly 
+partition(dt = '${hiveconf:START_DATE}',hour = '${hiveconf:HOUR}')
+select aa.adid, aa.dim_id, t_rank_num,aa.score
+  from (select adid, 3 as dim_id,t_rank_num, score
+          from oversealogs.s_adid_provider_rank_score_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}'
+        union all
+        select adid, 4 as dim_id, t_rank_num,score
+          from oversealogs.s_adid_price_rank_score_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}'
+        union all
+        select adid, 5 as dim_id,t_rank_num, score
+          from oversealogs.s_adid_preweight_rank_score_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}'
+        union all
+        select adid, 6 as dim_id,t_rank_num, score
+          from oversealogs.s_adid_cr_rank_score_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}'
+        union all
+        select adid, 7 as dim_id,t_rank_num, score
+          from oversealogs.s_adid_cap_rank_score_hourly
+         where dt = '${hiveconf:START_DATE}'
+           and hour = '${hiveconf:HOUR}') aa;
+----sum_score
+insert overwrite table oversealogs.s_adid_sum_score_hourly
+ partition(dt = '${hiveconf:START_DATE}',hour = '${hiveconf:HOUR}')
+select adid, sum(score)
+  from oversealogs.s_adid_all_dim_score_hourly
+ where dt = '${hiveconf:START_DATE}'
+   and hour = '${hiveconf:HOUR}'
+ group by adid;
+            
+            

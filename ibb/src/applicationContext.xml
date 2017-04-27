@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	    http://www.springframework.org/schema/aop 
+	    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	    http://www.springframework.org/schema/tx   
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+	">
+	<context:component-scan base-package="com.web">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:mysql.properties</value>
+				<value>classpath:memcache.properties</value>
+                <!--<value>classpath:conf/redis.properties</value>-->
+			</list>
+		</property>
+	</bean>
+
+	<bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder">
+		<constructor-arg>
+			<list>
+				<bean class="java.net.InetSocketAddress">
+					<constructor-arg>
+						<value>${xmemcache.host}</value>
+					</constructor-arg>
+					<constructor-arg>
+						<value>${xmemcache.port}</value>
+					</constructor-arg>
+				</bean>
+			</list>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<value>1</value>
+			</list>
+		</constructor-arg>
+		<property name="connectionPoolSize">
+			<value>${xmemcache.connection.pool}</value>
+		</property>
+		<property name="commandFactory">
+			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean>
+		</property>
+		<property name="sessionLocator">
+			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+		</property>
+		<property name="transcoder">
+			<bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+		</property>
+	</bean>
+	<bean name="memcachedClient" factory-bean="memcachedClientBuilder"
+		factory-method="build" destroy-method="shutdown" />
+
+	<!--<bean id="redisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.maxTotal}" />
+		<property name="maxIdle" value="${redis.maxIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${redis.timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${redis.minEvictableIdleTimeMillis}" />
+		<property name="testOnBorrow" value="${redis.testOnBorrow}" />
+	</bean>
+
+	<bean id="redisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="hostName" value="${redis.host}" />
+		<property name="port" value="${redis.port}" />
+		<property name="poolConfig" ref="redisPoolConfig" />
+	</bean>
+	<bean id="redisClient" class="com.factory.RedisFactory">
+		<property name="redisConnFactory" ref="redisConnectionFactory" />
+	</bean>-->
+
+	<import resource="conf/adsDao.xml" />
+
+	<bean id="apiServlet" class="com.ibb.control.impl.ApiServletImpl" />
+	<bean id="vpnServlet" class="com.ibb.control.impl.VpnServletImpl" />
+	<bean id="youtbServlet" class="com.ibb.control.impl.YouTbServletImpl" />
+    <bean id="colorServlet" class="com.ibb.control.impl.ColorServletImpl"/>
+	<bean id="followServlet" class="com.ibb.control.impl.FollowServletImpl"/>
+
+	<!-- 要调用的工作类 -->
+	<!-- ****************************************************************** -->
+	<!-- bean 小时推送信息 end -->
+	<bean id="SendPush" class="com.ibb.control.SendToAPNS" />
+
+	<bean id="muzhengyong"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendMusicZheng" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushMusicZhengYong"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="muzhengyong" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 8 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="muhanyibo"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendMusicHan" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushMusicHanYiBo"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="muhanyibo" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="muliuzongxin"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendMusicLiu" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushMusicLiuZongXin"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="muliuzongxin" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="mushangxiuqiao"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendMusicShang" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushMusicShangXiuQiao"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="mushangxiuqiao" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="YouTubeHan"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendYouTubeHan" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushYouTubeHanYiBo"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="YouTubeHan" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */2 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="YouTubeZheng"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendYouTubeZheng" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushYouTubeZhengYong"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="YouTubeZheng" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="FollowZhou"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendFollowZhou" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushFollowZhouLiang"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="FollowZhou" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="test"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="send" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="Test"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="test" />
+		</property>
+		<property name="cronExpression">
+			<value>0 10 19 * * ?</value>
+		</property>
+	</bean>
+
+	<bean name="h" lazy-init="false" autowire="no"
+		  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+                <!--<ref bean="PushMusicZhengYong" />-->
+                <!--<ref bean="PushMusicHanYiBo"/>-->
+				<!--<ref bean="PushMusicLiuZongXin"/>-->
+				<!--<ref bean="PushMusicShangXiuQiao"/>-->
+				<!--<ref bean="PushYouTubeHanYiBo"/>-->
+				<!--<ref bean="PushYouTubeZhengYong"/>-->
+				<!--<ref bean="PushFollowZhouLiang"/>-->
+                <!--<ref bean="Test"/>-->
+			</list>
+		</property>
+	</bean>
+	<!-- push类结束 -->
+	<!-- ****************************************************************** -->
+	<!-- ****************************************************************** -->
+	<!-- bean 小时爬vpn server信息 end -->
+	<bean id="VpnServerPython" class="com.ibb.control.VpnServerPython" />
+
+	<bean id="vpnserver"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="VpnServerPython" />
+		<property name="targetMethod" value="work" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="python"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="vpnserver" />
+		</property>
+		<property name="cronExpression">
+			<value>0 1 */2 * * ?</value>
+			<!--<value>0 1 5 * * ?</value>-->
+	</property>
+	</bean>
+
+	<bean name="v" lazy-init="false" autowire="no"
+	  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<property name="triggers">
+		<list>
+			<ref bean="python" />
+		</list>
+	</property>
+	</bean>
+	<!-- python结束 -->
+	<!-- ****************************************************************** -->
+	<!-- ****************************************************************** -->
+	<!-- bean 抓取photos信息 begin -->
+	<bean id="ColorGrabPhoto" class="com.ibb.control.ColorGrabPhoto" />
+
+	<bean id="colorphoto"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ColorGrabPhoto" />
+		<property name="targetMethod" value="GrabPhoto" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="grabPhoto"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="colorphoto" />
+		</property>
+		<property name="cronExpression">
+			<value>0 42 17 * * ?</value>
+			<!--<value>0 1 5 * * ?</value>-->
+		</property>
+	</bean>
+
+	<bean name="p" lazy-init="false" autowire="no"
+		  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!--<ref bean="grabPhoto" />-->
+			</list>
+		</property>
+	</bean>
+	<!-- 总管理类结束 -->
+	<!-- ****************************************************************** -->
+	<!-- ****************************************************************** -->
+</beans>
