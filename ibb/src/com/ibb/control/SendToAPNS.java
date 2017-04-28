@@ -175,6 +175,27 @@ public class SendToAPNS {
         }
     }
 
+    public void sendVpnZheng(){
+        MainSend send=new MainSend();
+        AdTokensDao adtokensdao = (AdTokensDao) SpringHelper.getBean("dAdTokensDao");
+        String pkg = "com.vpnActive.app";
+        List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
+        List<String> tokens= new ArrayList<String>();
+        for(AdTokens ad : tokenlist) {
+            if(ad.getPkg().equals(pkg)){
+                tokens.add(ad.getTokens().toString());
+                //String path = paths + "vpn/zhengyong/activeVPN_push.p12";     //上线正式用
+                String path = paths + "vpn/zhengyong/activeVPN_dev.p12";      //上线测试用
+                //String path = "D:\IOS后端内容\iospush\vpn\zhengyong\activeVPN_dev.p12";   //本地测试用
+                String password="shadowreport123";
+                String message="{'aps':{'alert':'Out of Asia, embrace the world'}}";
+                Integer count=1;
+                boolean sendCount=false;
+                send.sendpush(tokens, path, password, message, count, sendCount, pkg);
+            }
+        }
+    }
+
     public void send() {
         System.out.println("Ready to send mail ...");
         JavaMailWithAttachment se = new JavaMailWithAttachment(false);
