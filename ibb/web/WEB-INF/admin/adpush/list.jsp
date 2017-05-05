@@ -193,8 +193,11 @@
                                             <option value="com.onlinemusic.player">com.onlinemusic.player</option>
                                             <option value="com.FreeMusic20170213">com.FreeMusic20170213</option>
                                             <option value="com.YouTubePro">com.YouTubePro</option>
+                                            <option value="com.vpnActive.app">com.vpnActive.app</option>
                                             <option value="com.shadowfollow.com">com.shadowfollow.com</option>
-                                            <option value="com.shadowfollow.com">com.vpnActive.app</option>
+                                            <option value="com.CircleReport.app">com.CircleReport.app</option>
+                                            <option value="com.follow.app">com.follow.app</option>
+                                            <option value="com.followersLife.app">com.followersLife.app</option>
                                         </select>
                                     </div>
                                 </div>
@@ -237,9 +240,12 @@
                                                             <a href="<%=basePath%>/push/toEditAdPush?id=${pg.id}">
                                                                 <i class="am-icon-pencil"></i> 编辑
                                                             </a>
-                                                            <a href="<%=basePath%>/push/deleteAdPush?id=${pg.id}" class="tpl-table-black-operation-del" onclick="alert('确认删除')">
+                                                            <a href="javascript:void(0)" class="tpl-table-black-operation-del" onClick="deleteId(${pg.id})">
                                                                 <i class="am-icon-trash"></i> 删除
                                                             </a>
+                                                            <%--<a href="<%=basePath%>/push/deleteAdPush?id=${pg.id}" class="tpl-table-black-operation-del" onclick="alert('确认删除')">
+                                                                <i class="am-icon-trash"></i> 删除
+                                                            </a>--%>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -294,6 +300,13 @@
     function batchDelete(){
         if(confirm("真的要删除这批策略吗?")){
             $("#form1").attr("action","<%=basePath%>/push/batchDelete");
+            $("#form1").submit();
+        }
+    }
+    /*   单个删除   */
+    function deleteId(id){
+        if(confirm("真的要删除吗?")){
+            $("#form1").attr("action","<%=basePath%>/push/deleteAdPush?id="+id);
             $("#form1").submit();
         }
     }

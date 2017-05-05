@@ -493,7 +493,16 @@ public class FollowServletImpl extends FollowServlet {
         //苹果客户端传上来的收据,是最原据的收据
         String receipt = req.voucher;
         System.out.println("来自苹果端的验证...");
-        String password ="f9dc3337f05744e9815a16a660cc0376";//共享秘钥
+        String password = null;
+        if(pkg.equals("com.shadowfollow.com")){
+            password = "4e8cf876984f4e7390ae9fcff39281bc";//共享秘钥
+        }else if(pkg.equals("com.followersLife.app")){
+            password = "45482aa99a8f4c129d3b66efca617539";
+        }else if(pkg.equals("com.follow.app")){
+            password = "f9dc3337f05744e9815a16a660cc0376";
+        }else if(pkg.equals("com.CircleReport.app")) {
+            password = "9fcefad6fe344971895a88d67ef5de2c";
+        }
         System.out.println("receipt  "+receipt);
         if (!StringUtil.isBlank(pkg) && !StringUtil.isBlank(userid) && !StringUtil.isBlank(receipt)) {
             //拿到收据的MD5

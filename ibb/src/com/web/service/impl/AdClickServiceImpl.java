@@ -1,12 +1,12 @@
 package com.web.service.impl;
 
 import com.ibb.bean.AdClick;
-import com.ibb.bean.AdControl;
 import com.ibb.dao.AdClickDao;
 import com.web.pojo.PageBean;
 import com.web.service.AdClickService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
@@ -15,7 +15,6 @@ import java.util.List;
  */
 @Service
 public class AdClickServiceImpl implements AdClickService {
-
 
     @Autowired
     private AdClickDao adClickDao;

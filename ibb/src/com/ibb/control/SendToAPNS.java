@@ -175,6 +175,27 @@ public class SendToAPNS {
         }
     }
 
+    public void sendFollowLiu(){
+        MainSend send=new MainSend();
+        AdTokensDao adtokensdao = (AdTokensDao) SpringHelper.getBean("dAdTokensDao");
+        String pkg = "com.CircleReport.app";
+        List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
+        List<String> tokens= new ArrayList<String>();
+        for(AdTokens ad : tokenlist) {
+            if(ad.getPkg().equals(pkg)){
+                tokens.add(ad.getTokens().toString());
+                //String path = paths + "follow/liuzongxin/circleReport_push.p12";     //上线正式用
+                String path = paths + "follow/liuzongxin/circleReport_push.p12";      //上线测试用
+                //String path = "D:\IOS后端内容\iospush\follow\liuzongxin\circleReport_dev.p12";   //本地测试用
+                String password="circlereport123";
+                String message="{'aps':{'alert':'fast 8'}}";
+                Integer count=1;
+                boolean sendCount=false;
+                send.sendpush(tokens, path, password, message, count, sendCount, pkg);
+            }
+        }
+    }
+
     public void sendVpnZheng(){
         MainSend send=new MainSend();
         AdTokensDao adtokensdao = (AdTokensDao) SpringHelper.getBean("dAdTokensDao");

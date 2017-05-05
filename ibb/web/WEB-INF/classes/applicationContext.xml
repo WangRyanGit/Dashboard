@@ -205,6 +205,38 @@
 		</property>
 	</bean>
 
+	<bean id="FollowLiu"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendFollowLiu" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushFollowLiuZongXin"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="FollowLiu" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="VpnZheng"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendVpnZheng" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushVpnZhengYong"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="VpnZheng" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+
 	<bean id="test"
 		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="SendPush" />
@@ -232,6 +264,8 @@
 				<!--<ref bean="PushYouTubeHanYiBo"/>-->
 				<!--<ref bean="PushYouTubeZhengYong"/>-->
 				<!--<ref bean="PushFollowZhouLiang"/>-->
+				<!--<ref bean="PushFollowLiuZongXin"/>-->
+				<!--<ref bean="PushVpnZhengYong"/>-->
                 <!--<ref bean="Test"/>-->
 			</list>
 		</property>

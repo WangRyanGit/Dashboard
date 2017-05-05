@@ -1,5 +1,7 @@
 package com.ibb.control;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -31,8 +33,21 @@ public class Test {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
-		AdClickDao adClickDao = (AdClickDao) ctx.getBean("dClickDao");
+		/*ApplicationContext ctx = new ClassPathXmlApplicationConte                                   xt("applicationContext.xml");
+		AdClickDao adClickDao = (AdClickDao) ctx.getBean("dClickDao");*/
+
+		char[] nums = {'1','2','3'};
+		try{
+			File file = new File("E:\\test.log");
+			FileWriter fw = new FileWriter(file);
+			fw.write(String.valueOf(nums));
+			fw.close();
+
+		}catch (Exception e){
+
+		}
+
+
 
 
 		/*ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
