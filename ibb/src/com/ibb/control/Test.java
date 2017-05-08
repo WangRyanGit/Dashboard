@@ -3,6 +3,7 @@ package com.ibb.control;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,11 +17,10 @@ import com.ibb.bean.AdClick;
 import com.ibb.bean.AdStrategy;
 import com.ibb.bean.Apps;
 import com.ibb.bean.ColorPhotos;
-import com.ibb.dao.AdClickDao;
-import com.ibb.dao.AdStrategyDao;
-import com.ibb.dao.AppsDao;
-import com.ibb.dao.ColorPhotosDao;
+import com.ibb.dao.*;
+import com.ibb.util.DateUtil;
 import com.logic.LBSManager;
+import com.web.pojo.VpnData;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,20 +33,21 @@ public class Test {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		/*ApplicationContext ctx = new ClassPathXmlApplicationConte                                   xt("applicationContext.xml");
-		AdClickDao adClickDao = (AdClickDao) ctx.getBean("dClickDao");*/
-
-		char[] nums = {'1','2','3'};
-		try{
-			File file = new File("E:\\test.log");
-			FileWriter fw = new FileWriter(file);
-			fw.write(String.valueOf(nums));
-			fw.close();
-
-		}catch (Exception e){
-
+		/*ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+		VpnUsersDao usersDao = (VpnUsersDao) ctx.getBean("dVpnUsersDao");
+		List<VpnData> data = usersDao.findData("com",0l,"",0,10);
+		System.out.println(data.size());
+		for (VpnData vp :data){
+			System.out.println("  " + vp.getExpires_date() +" "+vp.getEndtime());
 		}
-
+		int row = usersDao.findCount("com",0l,"");
+		System.out.println("row  "+row);*/
+		try {
+			System.out.println(DateUtil.dateToStamp("2017-04-05 16:06:56"));
+			System.out.println(DateUtil.stampToDate("1491381416000"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 
 
 

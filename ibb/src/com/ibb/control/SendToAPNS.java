@@ -120,8 +120,8 @@ public class SendToAPNS {
             if(ad.getPkg().equals(pkg)){
                 System.out.println("token  "+ad.getTokens());
                 tokens.add(ad.getTokens().toString());
-                //String path = paths + "youtube/hanyibo/TubePro_distribution.p12";     //上线正式用
-                String path = paths + "youtube/hanyibo/TubePro_development.p12";      //上线测试用
+                String path = paths + "youtube/hanyibo/TubePro_distribution.p12";     //上线正式用
+                //String path = paths + "youtube/hanyibo/TubePro_development.p12";      //上线测试用
                 //String path = "D:/IOS后端内容/iospush/YouTube/hanyibo/TubePro_development.p12";   //本地测试用
                 String password="";
                 String message="{'aps':{'alert':'Music without borders, you and I share'}}";
@@ -163,8 +163,8 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                //String path = paths + "follow/zhouliang/ShadowReport_push.p12";     //上线正式用
-                String path = paths + "follow/zhouliang/ShadowReport_devPush.p12";      //上线测试用
+                String path = paths + "follow/zhouliang/ShadowReport_push.p12";     //上线正式用
+                //String path = paths + "follow/zhouliang/ShadowReport_devPush.p12";      //上线测试用
                 //String path = "D:\IOS后端内容\iospush\follow\zhouliang\ShadowReport_devPush.p12";   //本地测试用
                 String password="shadowreport123";
                 String message="{'aps':{'alert':'fast 8'}}";
@@ -184,8 +184,8 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                //String path = paths + "follow/liuzongxin/circleReport_push.p12";     //上线正式用
-                String path = paths + "follow/liuzongxin/circleReport_push.p12";      //上线测试用
+                String path = paths + "follow/liuzongxin/circleReport_push.p12";     //上线正式用
+                //String path = paths + "follow/liuzongxin/circleReport_push.p12";      //上线测试用
                 //String path = "D:\IOS后端内容\iospush\follow\liuzongxin\circleReport_dev.p12";   //本地测试用
                 String password="circlereport123";
                 String message="{'aps':{'alert':'fast 8'}}";
@@ -205,10 +205,10 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                //String path = paths + "vpn/zhengyong/activeVPN_push.p12";     //上线正式用
-                String path = paths + "vpn/zhengyong/activeVPN_dev.p12";      //上线测试用
+                String path = paths + "vpn/zhengyong/activeVPN_push.p12";     //上线正式用
+                //String path = paths + "vpn/zhengyong/activeVPN_dev.p12";      //上线测试用
                 //String path = "D:\IOS后端内容\iospush\vpn\zhengyong\activeVPN_dev.p12";   //本地测试用
-                String password="shadowreport123";
+                String password="activevpn123";
                 String message="{'aps':{'alert':'Out of Asia, embrace the world'}}";
                 Integer count=1;
                 boolean sendCount=false;

@@ -3,6 +3,7 @@ package com.ibb.dao;
 import com.factory.CacheFactory;
 import com.ibb.bean.VpnUsers;
 import com.mysql.jdbc.Statement;
+import com.web.pojo.VpnData;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
@@ -258,5 +259,28 @@ public class VpnUsersDao extends BaseDao {
             return list;
        }
     }
+
+    /*
+    *web 后台特殊使用
+     */
+    //总记录数
+    public int findCount(String pkg,Long userid,String regtime) {
+        String sql = "select count(1) from " + table() + " where 1 = 1 and `status` =0 and pkg like '%"+ pkg + "%'and id like '%"+ userid + "%'and regtime > '"+ regtime + "'";
+        //queryForObject()方法中，如果需要返回的是int类型，就写Integer.class,需要返回long类型就写long.class.
+        int count = getJdbcTemplate().queryForObject(sql,Integer.class);
+        return count;
+    }
+    //分页
+    public List<VpnData> findData(String pkg,Long userid,String regtime,Integer start, Integer size) {
+        List<VpnData> list = query("SELECT us.id as userid,us.pkg,us.username,us.password,si.begintime,si.endtime,FROM_UNIXTIME(pu.purchase_date / 1000,'%Y-%m-%d %H:%i') as purchase_date,FROM_UNIXTIME(pu.expires_date / 1000,'%Y-%m-%d %H:%i') as expires_date,us.regtime " +
+                        "FROM vpn_users us LEFT JOIN vpn_sign si ON us.id = si.userId LEFT JOIN vpn_purchase pu ON us.id = pu.user_id WHERE 1 = 1 and us.`status` = 0 and us.pkg like '%"+ pkg + "%'and userid like '%" + userid + "%' and us.regtime > '" + regtime + "' LIMIT "+start+","+size,
+                null, null,
+                new CommonRowMapper(VpnData.class));
+        CacheFactory.delete(CACHE_KEY_ALL);
+        return list;
+    }
+
+
+
 
 }

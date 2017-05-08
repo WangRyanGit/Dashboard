@@ -159,6 +159,24 @@
                     </li>
                 </ul>
             </li>
+            <li class="sidebar-nav-link">
+                <a href="javascript:;" class="sidebar-nav-sub-title">
+                    <i class="am-icon-wpforms sidebar-nav-link-logo"></i> 用户列表
+                    <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
+                </a>
+                <ul class="sidebar-nav sidebar-nav-sub">
+                    <li class="sidebar-nav-link">
+                        <a href="<%=basePath%>/vpncontrol/showAllVpnUserData">
+                            <span class="am-icon-angle-right sidebar-nav-link-logo"></span> VPN用户
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-link">
+                        <a href="<%=basePath%>/followcontrol/showAllFollowData">
+                            <span class="am-icon-angle-right sidebar-nav-link-logo"></span> FOLLOW用户
+                        </a>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </div>
 

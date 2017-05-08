@@ -16,7 +16,12 @@ public class PageBean<T> {
 
 	private String pkg;
 	private String adid;
-	private Integer position;
+	private Integer position;//其他五项用
+
+	private Long userid;//vpn用
+	private String regtime;
+
+	private String user_id;//follow用
     
     public PageBean(){
     	super();
@@ -75,5 +80,28 @@ public class PageBean<T> {
 
 	public void setPosition(Integer position) {
 		this.position = position;
+	}
+
+	public Long getUserid() {
+		return userid;
+	}
+
+	public void setUserid(Long userid) {
+		this.userid = userid;
+	}
+
+	public String getRegtime(){
+    	return regtime;
+	}
+	public void setRegtime(String regtime){
+		this.regtime = regtime;
+	}
+
+	public String getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
 }

@@ -2,6 +2,7 @@ package com.ibb.dao;
 
 import com.factory.CacheFactory;
 import com.ibb.bean.FollowPurchase;
+import com.ibb.util.DateUtil;
 import com.mysql.jdbc.Statement;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -10,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,12 +139,20 @@ public class FollowPurchaseDao extends BaseDao {
                     ps.setNull(i++, Types.NULL);
                 }
                 if (item.getPurchase_date() != null) {
-                    ps.setString(i++, item.getPurchase_date());
+                    try {
+                        ps.setString(i++, DateUtil.dateToStamp(item.getPurchase_date()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     ps.setNull(i++, Types.NULL);
                 }
                 if (item.getExpires_date() != null) {
-                    ps.setString(i++, item.getExpires_date());
+                    try {
+                        ps.setString(i++, DateUtil.dateToStamp(item.getExpires_date()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     ps.setNull(i++, Types.NULL);
                 }
@@ -162,6 +172,8 @@ public class FollowPurchaseDao extends BaseDao {
         int id = getJdbcTemplate().update(sb.toString(), psc);
         if (id > 0) {
             CacheFactory.delete(CACHE_KEY_ALL);
+            CacheFactory.delete(CACHE_KEY_ID + item.getUser_id());
+            CacheFactory.delete(CACHE_KEY_PKG_USERID + item.getPkg()+ "_" + item.getUser_id());
         }
     }
     /**
@@ -236,7 +248,38 @@ public class FollowPurchaseDao extends BaseDao {
         }
     }
 
-
+    /*
+    *web 后台特殊使用
+     */
+    //查找单个
+    public FollowPurchase findById(Long id) {
+        Object obj = CacheFactory.get(CACHE_KEY_ID + id);
+        if (obj != null && obj instanceof FollowPurchase) {
+            return (FollowPurchase) obj;
+        } else {
+            FollowPurchase list = queryForObject("select id,pkg,user_id,FROM_UNIXTIME(purchase_date / 1000,'%Y-%m-%d %H:%i:%s') as purchase_date,FROM_UNIXTIME(expires_date / 1000,'%Y-%m-%d %H:%i:%s') as expires_date,`status`,quantity,product_id,md5_receipt,createdate,updatedate from " + table() + " where 1 = 1 and  id = " + id, FollowPurchase.class);
+            if (list != null) {
+                CacheFactory.add(CACHE_KEY_ID + id, list, CacheFactory.ONE_MONTH);
+            }
+            return list;
+        }
+    }
+    //总记录数
+    public int findCount(String pkg,String user_id) {
+        String sql = "select count(1) from " + table() + " where 1 = 1 and pkg like '%"+ pkg + "%'and user_id like '%"+ user_id + "%'";
+        //queryForObject()方法中，如果需要返回的是int类型，就写Integer.class,需要返回long类型就写long.class.
+        int count = getJdbcTemplate().queryForObject(sql,Integer.class);
+        return count;
+    }
+    //分页
+    public List<FollowPurchase> findData(String pkg, String user_id, Integer start, Integer size) {
+        List<FollowPurchase> list = query("SELECT id,pkg,user_id,FROM_UNIXTIME(purchase_date / 1000,'%Y-%m-%d %H:%i:%s') as purchase_date,FROM_UNIXTIME(expires_date / 1000,'%Y-%m-%d %H:%i:%s') as expires_date,`status`,quantity,product_id,md5_receipt,createdate,updatedate FROM "+ table()
+                        + " where 1 = 1 and pkg like '%"+ pkg + "%'and user_id like '%" + user_id + "%' LIMIT "+start+","+size,
+                null, null,
+                new CommonRowMapper(FollowPurchase.class));
+        CacheFactory.delete(CACHE_KEY_ALL);
+        return list;
+    }
 
 
 }

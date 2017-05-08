@@ -105,7 +105,7 @@
 			<ref bean="muzhengyong" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 8 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -121,7 +121,7 @@
 			<ref bean="muhanyibo" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -137,7 +137,7 @@
 			<ref bean="muliuzongxin" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -153,7 +153,7 @@
 			<ref bean="mushangxiuqiao" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -169,7 +169,7 @@
 			<ref bean="YouTubeHan" />
 		</property>
 		<property name="cronExpression">
-			<value>0 */2 * * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -185,7 +185,7 @@
 			<ref bean="YouTubeZheng" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -201,7 +201,7 @@
 			<ref bean="FollowZhou" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -217,7 +217,7 @@
 			<ref bean="FollowLiu" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -233,7 +233,7 @@
 			<ref bean="VpnZheng" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 1 * * ?</value>
+			<value>0 0 12,23 * * ?</value>
 		</property>
 	</bean>
 
@@ -257,15 +257,15 @@
 		  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-                <!--<ref bean="PushMusicZhengYong" />-->
-                <!--<ref bean="PushMusicHanYiBo"/>-->
-				<!--<ref bean="PushMusicLiuZongXin"/>-->
-				<!--<ref bean="PushMusicShangXiuQiao"/>-->
-				<!--<ref bean="PushYouTubeHanYiBo"/>-->
-				<!--<ref bean="PushYouTubeZhengYong"/>-->
-				<!--<ref bean="PushFollowZhouLiang"/>-->
-				<!--<ref bean="PushFollowLiuZongXin"/>-->
-				<!--<ref bean="PushVpnZhengYong"/>-->
+                <ref bean="PushMusicZhengYong" />
+                <ref bean="PushMusicHanYiBo"/>
+				<ref bean="PushMusicLiuZongXin"/>
+				<ref bean="PushMusicShangXiuQiao"/>
+				<ref bean="PushYouTubeHanYiBo"/>
+				<ref bean="PushYouTubeZhengYong"/>
+				<ref bean="PushFollowZhouLiang"/>
+				<ref bean="PushFollowLiuZongXin"/>
+				<ref bean="PushVpnZhengYong"/>
                 <!--<ref bean="Test"/>-->
 			</list>
 		</property>
