@@ -55,7 +55,7 @@ public class MainSend {
                 String mess = ad.getMessage();
                 payLoad.addAlert(mess); // 消息内容
             }
-            //payLoad.addAlert("feng"); // 消息内容
+            //payLoad.addAlert("There are plenty of funny video and TV shows which let you learn and laugh with your favorite characters for free."); // 消息内容
 
             payLoad.addBadge(count); // iphone应用图标上小红圈上的数值
 
@@ -100,6 +100,7 @@ public class MainSend {
                 log.debug("------Others 成功 (" + successfulNotifications.size() + "):");
             }
              //pushManager.stopConnection();
+            System.out.println(pkg + " end push");
         } catch (Exception e) {
             e.printStackTrace();
         }

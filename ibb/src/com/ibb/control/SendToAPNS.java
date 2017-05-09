@@ -30,16 +30,16 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "music/zhengyong/zypushDis.p12";     //上线正式用
-                //String path = paths + "music/zhengyong/zypushDev.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\music\zhengyong\zypushDev.p12";   //本地测试用
-                String password="123456";
-                String message="{'aps':{'alert':'Music without borders, you and I share'}}";
-                Integer count=1;
-                boolean sendCount=false;
-                send.sendpush(tokens, path, password, message, count, sendCount,pkg);
             }
         }
+        String path = paths + "music/zhengyong/zypushDis.p12";     //上线正式用
+        //String path = paths + "music/zhengyong/zypushDev.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\music\zhengyong\zypushDev.p12";   //本地测试用
+        String password="123456";
+        String message="{'aps':{'alert':'Music without borders, you and I share'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount,pkg);
     }
 
     public void sendMusicHan() {
@@ -52,16 +52,16 @@ public class SendToAPNS {
         for (AdTokens ad : tokenlist) {
             if (ad.getPkg().equals(pkg)) {
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "music/hanyibo/zypushDis.p12";     //上线正式用
-                //String path = paths + "hanyibo/hybpushDev.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\music\hanyibo\hybpushDev.p12";   //本地测试用
-                String password = "123456";
-                String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
-                Integer count = 1;
-                boolean sendCount = false;
-                send.sendpush(tokens, path, password, message, count, sendCount,pkg);
             }
         }
+        String path = paths + "music/hanyibo/zypushDis.p12";     //上线正式用
+        //String path = paths + "hanyibo/hybpushDev.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\music\hanyibo\hybpushDev.p12";   //本地测试用
+        String password = "123456";
+        String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
+        Integer count = 1;
+        boolean sendCount = false;
+        send.sendpush(tokens, path, password, message, count, sendCount,pkg);
     }
     public void sendMusicLiu() {
         MainSend send = new MainSend();
@@ -73,16 +73,16 @@ public class SendToAPNS {
         for (AdTokens ad : tokenlist) {
             if (ad.getPkg().equals(pkg)) {
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "music/liuzongxin/LZX2_push_distribution.p12";     //上线正式用
-                //String path = paths + "music/liuzongxin/LZX2_push_developer.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\music\liuzongxin\LZX2_push_developer.p12";   //本地测试用
-                String password = "123456";
-                String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
-                Integer count = 1;
-                boolean sendCount = false;
-                send.sendpush(tokens, path, password, message, count, sendCount,pkg);
             }
         }
+        String path = paths + "music/liuzongxin/LZX2_push_distribution.p12";     //上线正式用
+        //String path = paths + "music/liuzongxin/LZX2_push_developer.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\music\liuzongxin\LZX2_push_developer.p12";   //本地测试用
+        String password = "123456";
+        String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
+        Integer count = 1;
+        boolean sendCount = false;
+        send.sendpush(tokens, path, password, message, count, sendCount,pkg);
     }
 
     public void sendMusicShang() {
@@ -95,16 +95,16 @@ public class SendToAPNS {
         for (AdTokens ad : tokenlist) {
             if (ad.getPkg().equals(pkg)) {
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "music/shangxiuqiao/sxq2_push_distribution.p12";     //上线正式用
-                //String path = paths + "music/shangxiuqiao/sxq2_push_development.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\music\shangxiuqiao\sxq2_push_development.p12";   //本地测试用
-                String password = "123456";
-                String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
-                Integer count = 1;
-                boolean sendCount = false;
-                send.sendpush(tokens, path, password, message, count, sendCount,pkg);
             }
         }
+        String path = paths + "music/shangxiuqiao/sxq2_push_distribution.p12";     //上线正式用
+        //String path = paths + "music/shangxiuqiao/sxq2_push_development.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\music\shangxiuqiao\sxq2_push_development.p12";   //本地测试用
+        String password = "123456";
+        String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
+        Integer count = 1;
+        boolean sendCount = false;
+        send.sendpush(tokens, path, password, message, count, sendCount,pkg);
     }
 
 
@@ -120,16 +120,16 @@ public class SendToAPNS {
             if(ad.getPkg().equals(pkg)){
                 System.out.println("token  "+ad.getTokens());
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "youtube/hanyibo/TubePro_distribution.p12";     //上线正式用
-                //String path = paths + "youtube/hanyibo/TubePro_development.p12";      //上线测试用
-                //String path = "D:/IOS后端内容/iospush/YouTube/hanyibo/TubePro_development.p12";   //本地测试用
-                String password="";
-                String message="{'aps':{'alert':'Music without borders, you and I share'}}";
-                Integer count=1;
-                boolean sendCount=false;
-                send.sendpush(tokens, path, password, message, count, sendCount,pkg);
             }
         }
+        String path = paths + "youtube/hanyibo/TubePro_distribution.p12";     //上线正式用
+        //String path = paths + "youtube/hanyibo/TubePro_development.p12";      //上线测试用
+        //String path = "E:\\TubePro_distribution.p12";   //本地测试用
+        String password="";
+        String message="{'aps':{'alert':'Music without borders, you and I share'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount,pkg);
     }
 
     public void sendYouTubeZheng(){
@@ -142,16 +142,16 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "youtube/zhengyong/zhengyongshangxiantuisongzhengshu.p12";     //上线正式用
-                //String path = paths + "youtube/zhengyong/zhengyongshangxiantuisongzhengshu.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\YouTube\zhengyong\zhengyongceshituisongzhengshu.p12";   //本地测试用
-                String password="";
-                String message="{'aps':{'alert':'Music without borders, you and I share'}}";
-                Integer count=1;
-                boolean sendCount=false;
-                send.sendpush(tokens, path, password, message, count, sendCount,pkg);
             }
         }
+        String path = paths + "youtube/zhengyong/zhengyongshangxiantuisongzhengshu.p12";     //上线正式用
+        //String path = paths + "youtube/zhengyong/zhengyongshangxiantuisongzhengshu.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\YouTube\zhengyong\zhengyongceshituisongzhengshu.p12";   //本地测试用
+        String password="";
+        String message="{'aps':{'alert':'Music without borders, you and I share'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount,pkg);
     }
 
     public void sendFollowZhou(){
@@ -163,16 +163,16 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "follow/zhouliang/ShadowReport_push.p12";     //上线正式用
-                //String path = paths + "follow/zhouliang/ShadowReport_devPush.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\follow\zhouliang\ShadowReport_devPush.p12";   //本地测试用
-                String password="shadowreport123";
-                String message="{'aps':{'alert':'fast 8'}}";
-                Integer count=1;
-                boolean sendCount=false;
-                send.sendpush(tokens, path, password, message, count, sendCount, pkg);
             }
         }
+        String path = paths + "follow/zhouliang/ShadowReport_push.p12";     //上线正式用
+        //String path = paths + "follow/zhouliang/ShadowReport_devPush.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\follow\zhouliang\ShadowReport_devPush.p12";   //本地测试用
+        String password="shadowreport123";
+        String message="{'aps':{'alert':'fast 8'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount, pkg);
     }
 
     public void sendFollowLiu(){
@@ -184,16 +184,16 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "follow/liuzongxin/circleReport_push.p12";     //上线正式用
-                //String path = paths + "follow/liuzongxin/circleReport_push.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\follow\liuzongxin\circleReport_dev.p12";   //本地测试用
-                String password="circlereport123";
-                String message="{'aps':{'alert':'fast 8'}}";
-                Integer count=1;
-                boolean sendCount=false;
-                send.sendpush(tokens, path, password, message, count, sendCount, pkg);
             }
         }
+        String path = paths + "follow/liuzongxin/circleReport_push.p12";     //上线正式用
+        //String path = paths + "follow/liuzongxin/circleReport_push.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\follow\liuzongxin\circleReport_dev.p12";   //本地测试用
+        String password="circlereport123";
+        String message="{'aps':{'alert':'fast 8'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount, pkg);
     }
 
     public void sendVpnZheng(){
@@ -205,16 +205,16 @@ public class SendToAPNS {
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());
-                String path = paths + "vpn/zhengyong/activeVPN_push.p12";     //上线正式用
-                //String path = paths + "vpn/zhengyong/activeVPN_dev.p12";      //上线测试用
-                //String path = "D:\IOS后端内容\iospush\vpn\zhengyong\activeVPN_dev.p12";   //本地测试用
-                String password="activevpn123";
-                String message="{'aps':{'alert':'Out of Asia, embrace the world'}}";
-                Integer count=1;
-                boolean sendCount=false;
-                send.sendpush(tokens, path, password, message, count, sendCount, pkg);
             }
         }
+        String path = paths + "vpn/zhengyong/activeVPN_push.p12";     //上线正式用
+        //String path = paths + "vpn/zhengyong/activeVPN_dev.p12";      //上线测试用
+        //String path = "D:\IOS后端内容\iospush\vpn\zhengyong\activeVPN_dev.p12";   //本地测试用
+        String password="activevpn123";
+        String message="{'aps':{'alert':'Out of Asia, embrace the world'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount, pkg);
     }
 
     public void send() {

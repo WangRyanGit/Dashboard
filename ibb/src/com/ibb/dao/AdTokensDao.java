@@ -171,7 +171,7 @@ public class AdTokensDao extends BaseDao {
         if (obj != null && obj instanceof List) {
             return (List<AdTokens>) obj;
         } else {
-            List<AdTokens> list = query("select * from " + table() + " where status = 0 and  pkg = '"+ pkg + "' order by id desc",
+            List<AdTokens> list = query("select * from " + table() + " where status = 0 and pkg = '"+ pkg + "' order by id desc",
                     null, null,
                     new CommonRowMapper(AdTokens.class));
             if (list != null && list.size() > 0) {

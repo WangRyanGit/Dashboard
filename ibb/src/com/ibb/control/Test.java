@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,13 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.helper.RequestHelper;
-import com.ibb.bean.AdClick;
-import com.ibb.bean.AdStrategy;
-import com.ibb.bean.Apps;
-import com.ibb.bean.ColorPhotos;
+import com.ibb.bean.*;
 import com.ibb.dao.*;
 import com.ibb.util.DateUtil;
 import com.logic.LBSManager;
+import com.util.SpringHelper;
 import com.web.pojo.VpnData;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -32,22 +31,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Test {
 	private static final long serialVersionUID = 1L;
 
-	public static void main(String[] args) {
-		/*ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
-		VpnUsersDao usersDao = (VpnUsersDao) ctx.getBean("dVpnUsersDao");
-		List<VpnData> data = usersDao.findData("com",0l,"",0,10);
-		System.out.println(data.size());
-		for (VpnData vp :data){
-			System.out.println("  " + vp.getExpires_date() +" "+vp.getEndtime());
-		}
-		int row = usersDao.findCount("com",0l,"");
-		System.out.println("row  "+row);*/
-		try {
-			System.out.println(DateUtil.dateToStamp("2017-04-05 16:06:56"));
-			System.out.println(DateUtil.stampToDate("1491381416000"));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+	public static void main(String[] args){
+			MainSend send=new MainSend();
+			ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+			AdTokensDao adtokensdao = (AdTokensDao) ctx.getBean("dAdTokensDao");
+			String pkg = "com.YouTubePro";
+			List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
+			System.out.println("tokenlist.size  "+tokenlist.size());
+			List<String> tokens= new ArrayList<String>();
+			//tokens.add("1b493269a3658ab422697acd791ef96ec730829d3ba8ad46f5479e42d8977cc6");
+			for(AdTokens ad : tokenlist) {
+				if(ad.getPkg().equals(pkg)){
+					System.out.println("token  "+ad.getTokens());
+					tokens.add(ad.getTokens().toString());
+				}
+			}
+			String path = "E:\\TubePro_distribution.p12";   //本地测试用
+			String password="";
+			String message="{'aps':{'alert':'Music without borders, you and I share'}}";
+			Integer count=1;
+			boolean sendCount=false;
+			send.sendpush(tokens, path, password, message, count, sendCount,pkg);
+
 
 
 
@@ -78,49 +83,4 @@ public class Test {
 
 	}
 
-
-
-
-
-
-
-
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    /*public Test() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	*//**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 *//*
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("curl 请求");
-		String ip = RequestHelper.getIpAddr(request);
-		String country =LBSManager.getCountryByIp(ip);
-		response.getWriter().append("Served at: country //"+country);
-	}
-
-	*//**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 *//*
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
-	}
-	public static int i=0;
-	public static void main(String[] args) {
-		System.out.println(test());
-	}
-	public static int test(){
-		try {
-		return i = i+10;
-			
-		} finally {
-			return 2;
-		}
-	}*/
 }
