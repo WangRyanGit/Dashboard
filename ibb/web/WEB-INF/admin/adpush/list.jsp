@@ -211,11 +211,13 @@
                                             <option value="com.onlinemusic.player">com.onlinemusic.player</option>
                                             <option value="com.FreeMusic20170213">com.FreeMusic20170213</option>
                                             <option value="com.YouTubePro">com.YouTubePro</option>
+                                            <option value="com.myvideotube">com.myvideotube</option>
                                             <option value="com.vpnActive.app">com.vpnActive.app</option>
                                             <option value="com.shadowfollow.com">com.shadowfollow.com</option>
                                             <option value="com.CircleReport.app">com.CircleReport.app</option>
                                             <option value="com.follow.app">com.follow.app</option>
                                             <option value="com.followersLife.app">com.followersLife.app</option>
+                                            <option value="com.This-colour">com.This-colour</option>
                                         </select>
                                     </div>
                                 </div>

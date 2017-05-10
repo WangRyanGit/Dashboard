@@ -237,6 +237,22 @@
 		</property>
 	</bean>
 
+	<bean id="ColorZheng"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="SendPush" />
+		<property name="targetMethod" value="sendColorZheng" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="PushColorZhengYong"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="ColorZheng" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 12,23 * * ?</value>
+		</property>
+	</bean>
+
 	<bean id="test"
 		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="SendPush" />
@@ -266,6 +282,7 @@
 				<ref bean="PushFollowZhouLiang"/>
 				<ref bean="PushFollowLiuZongXin"/>
 				<ref bean="PushVpnZhengYong"/>
+				<ref bean="PushColorZhengYong"/>
                 <!--<ref bean="Test"/>-->
 			</list>
 		</property>

@@ -167,7 +167,7 @@ public class SendToAPNS {
         }
         String path = paths + "follow/zhouliang/ShadowReport_push.p12";     //上线正式用
         //String path = paths + "follow/zhouliang/ShadowReport_devPush.p12";      //上线测试用
-        //String path = "D:\IOS后端内容\iospush\follow\zhouliang\ShadowReport_devPush.p12";   //本地测试用
+        //String path = "D:\\IOS后端内容\\iospush\\follow\\zhouliang\\ShadowReport_devPush.p12";   //本地测试用
         String password="shadowreport123";
         String message="{'aps':{'alert':'fast 8'}}";
         Integer count=1;
@@ -211,6 +211,28 @@ public class SendToAPNS {
         //String path = paths + "vpn/zhengyong/activeVPN_dev.p12";      //上线测试用
         //String path = "D:\IOS后端内容\iospush\vpn\zhengyong\activeVPN_dev.p12";   //本地测试用
         String password="activevpn123";
+        String message="{'aps':{'alert':'Out of Asia, embrace the world'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount, pkg);
+    }
+
+    public void sendColorZheng(){
+        MainSend send=new MainSend();
+        AdTokensDao adtokensdao = (AdTokensDao) SpringHelper.getBean("dAdTokensDao");
+        String pkg = "com.This-colour";
+        List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
+        List<String> tokens= new ArrayList<String>();
+        //tokens.add("64005fe35b3ded34960b688f18b500efcac30cb0bfebd0c122a67c500887678b");
+        for(AdTokens ad : tokenlist) {
+            if(ad.getPkg().equals(pkg)){
+                tokens.add(ad.getTokens().toString());
+            }
+        }
+        String path = paths + "color/zhengyong/color.ZYdis.p12";     //上线正式用
+        //String path = paths + "color/zhengyong/color.ZYdev.p12";      //上线测试用
+        //String path = "D:\\IOS后端内容\\iospush\\color\\zhengyong\\color.ZYdev.p12";   //本地测试用
+        String password="color123";
         String message="{'aps':{'alert':'Out of Asia, embrace the world'}}";
         Integer count=1;
         boolean sendCount=false;
