@@ -55,7 +55,7 @@ public class MainSend {
                 String mess = ad.getMessage();
                 payLoad.addAlert(mess); // 消息内容
             }
-            //payLoad.addAlert("This color is beautiful"); // 消息内容
+            //payLoad.addAlert("Check your INS followers!"); // 消息内容
 
             payLoad.addBadge(count); // iphone应用图标上小红圈上的数值
 

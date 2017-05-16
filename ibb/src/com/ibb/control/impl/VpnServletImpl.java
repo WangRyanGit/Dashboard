@@ -1070,7 +1070,12 @@ public class VpnServletImpl extends VpnServlet {
         //苹果客户端传上来的收据,是最原据的收据
         String receipt = req.voucher;
         System.out.println("来自苹果端的验证...");
-        String password ="f9dc3337f05744e9815a16a660cc0376";
+        String password = null;
+        if(pkg.equals("com.vpnSafe.app")){
+            password = "4e8cf876984f4e7390ae9fcff39281bc";//共享秘钥
+        }else if(pkg.equals("com.vpnActive.app")){
+            password = "f9dc3337f05744e9815a16a660cc0376";
+        }
         System.out.println("receipt  "+receipt);
         if (!StringUtil.isBlank(pkg) && !StringUtil.isBlank(userid) && !StringUtil.isBlank(receipt)) {
             //拿到收据的MD5

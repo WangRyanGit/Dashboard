@@ -208,6 +208,7 @@
                                         <select data-am-selected="{btnSize: 'sm'}" name="pkg">
                                             <option value="com">所有APP</option>
                                             <option value="com.vpnActive.app">com.vpnActive.app</option>
+                                            <option value="com.vpnSafe.app">com.vpnSafe.app</option>
                                         </select>
                                     </div>
                                 </div>

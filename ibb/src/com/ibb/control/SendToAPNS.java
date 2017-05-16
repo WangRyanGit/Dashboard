@@ -186,10 +186,54 @@ public class SendToAPNS {
                 tokens.add(ad.getTokens().toString());
             }
         }
-        String path = paths + "follow/liuzongxin/circleReport_push.p12";     //上线正式用
-        //String path = paths + "follow/liuzongxin/circleReport_push.p12";      //上线测试用
-        //String path = "D:\IOS后端内容\iospush\follow\liuzongxin\circleReport_dev.p12";   //本地测试用
-        String password="circlereport123";
+        String path = paths + "follow/liuzongxin/CircleReport_push.p12";     //上线正式用
+        //String path = paths + "follow/liuzongxin/CircleReport_push.p12";      //上线测试用
+        //String path = "D:\\IOS后端内容\\iospush\\follow\\liuzongxin\\CircleReport_Dev.p12";   //本地测试用
+        String password="1234567890";
+        String message="{'aps':{'alert':'fast 8'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount, pkg);
+    }
+
+    public void sendFollowShang(){
+        MainSend send=new MainSend();
+        AdTokensDao adtokensdao = (AdTokensDao) SpringHelper.getBean("dAdTokensDao");
+        String pkg = "com.followersLife.app";
+        List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
+        List<String> tokens= new ArrayList<String>();
+        tokens.add("");
+        for(AdTokens ad : tokenlist) {
+            if(ad.getPkg().equals(pkg)){
+                tokens.add(ad.getTokens().toString());
+            }
+        }
+        String path = paths + "follow/shangxiuqiao/FollowersLife_push.p12";     //上线正式用
+        //String path = paths + "follow/shangxiuqiao/FollowersLife_push.p12";      //上线测试用
+        //String path = "D:\\IOS后端内容\\iospush\\follow\\shangxiuqiao\\FollowersLife_dev.p12";   //本地测试用
+        String password="1234567890";
+        String message="{'aps':{'alert':'fast 8'}}";
+        Integer count=1;
+        boolean sendCount=false;
+        send.sendpush(tokens, path, password, message, count, sendCount, pkg);
+    }
+
+    public void sendFollowZheng(){
+        MainSend send=new MainSend();
+        AdTokensDao adtokensdao = (AdTokensDao) SpringHelper.getBean("dAdTokensDao");
+        String pkg = "com.follow.app";
+        List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
+        List<String> tokens= new ArrayList<String>();
+        //tokens.add("");
+        for(AdTokens ad : tokenlist) {
+            if(ad.getPkg().equals(pkg)){
+                tokens.add(ad.getTokens().toString());
+            }
+        }
+        String path = paths + "follow/zhengyong/FollowersReport_push.p12";     //上线正式用
+        //String path = paths + "follow/zhengyong/FollowersReport_push.p12";      //上线测试用
+        //String path = "D:\\IOS后端内容\\iospush\\follow\\zhengyong\\FollowersReport_Dev.p12";   //本地测试用
+        String password="1234567890";
         String message="{'aps':{'alert':'fast 8'}}";
         Integer count=1;
         boolean sendCount=false;
