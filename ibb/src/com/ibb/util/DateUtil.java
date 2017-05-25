@@ -191,4 +191,29 @@ public class DateUtil
         return res;
     }
 
+    /*
+     * stringToDate
+     */
+    public static Date stringToDate(String str) {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            // Fri Feb 24 00:00:00 CST 2012
+            date = format.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    /*
+     * 将时间戳转化为时间（没有format）
+     */
+    public static Date stampStringToDate(String s){
+        Date date;
+        long lt = new Long(s);
+        date = new Date(lt);
+        return date;
+    }
+
 }

@@ -135,11 +135,13 @@ public class VpnUsersDao extends BaseDao {
     /**
      * 更新用户的付费时间
      */
-    public int updateRegtime(String regtime,Long id) {
-        String sql = "UPDATE "+ table() + " SET regtime = '" + regtime + "', `updatedate`=CURRENT_TIMESTAMP WHERE `status`= 0 AND id = "+ id;
+    public int updateRegtime(String regtime,Long id,String username,String password,String pkg) {
+        String sql = "UPDATE "+ table() + " SET regtime = '" + regtime + "', `updatedate`=CURRENT_TIMESTAMP WHERE `status`= 0 AND id = "+ id + " AND username = '"+ username+"'AND password = '"+ password+"'AND pkg = '"+ pkg+"'";
         int rows = getJdbcTemplate().update(sql);
         if (rows > 0){
             CacheFactory.delete(CACHE_KEY_ID + id);
+            CacheFactory.delete(CACHE_KEY_PKG_NAME + pkg+ "_" + username);
+            CacheFactory.delete(CACHE_KEY_PKG_NAME_PASS + pkg+ "_" + username+"_"+password);
         }
         return rows;
     }

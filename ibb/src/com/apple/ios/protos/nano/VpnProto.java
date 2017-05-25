@@ -1052,6 +1052,9 @@ public interface VpnProto {
     // optional string geo = 5;
     public String geo;
 
+    // optional string localtime = 6;
+    public String localtime;
+
     public VpnLoginRequest() {
       clear();
     }
@@ -1062,6 +1065,7 @@ public interface VpnProto {
       password = "";
       idfa = "";
       geo = "";
+      localtime = "";
       cachedSize = -1;
       return this;
     }
@@ -1083,6 +1087,9 @@ public interface VpnProto {
       }
       if (!this.geo.equals("")) {
         output.writeString(5, this.geo);
+      }
+      if (!this.localtime.equals("")) {
+        output.writeString(6, this.localtime);
       }
       super.writeTo(output);
     }
@@ -1109,6 +1116,10 @@ public interface VpnProto {
       if (!this.geo.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeStringSize(5, this.geo);
+      }
+      if (!this.localtime.equals("")) {
+        size += com.google.protobuf.nano.CodedOutputByteBufferNano
+            .computeStringSize(6, this.localtime);
       }
       return size;
     }
@@ -1146,6 +1157,10 @@ public interface VpnProto {
           }
           case 42: {
             this.geo = input.readString();
+            break;
+          }
+          case 50: {
+            this.localtime = input.readString();
             break;
           }
         }

@@ -315,6 +315,7 @@ public class VpnServletImpl extends VpnServlet {
         if (req != null){
             StringBuilder sb = new StringBuilder();
             sb.append(time).append("\t");
+            sb.append(req.localtime).append("\t");
             sb.append(req.geo).append("\t");
             sb.append(req.idfa).append("\t");
             sb.append(req.bundleId).append("\t");
@@ -328,10 +329,12 @@ public class VpnServletImpl extends VpnServlet {
         String pkg = null;
         String username = null;
         String password = null;
+        String localtime = null;
         try{
             pkg = req.bundleId;
             username = req.username;
             password = req.password;
+            localtime = req.localtime;
         }catch (Exception e){
 
         }
@@ -339,46 +342,121 @@ public class VpnServletImpl extends VpnServlet {
             try{
                 List<VpnUsers> vpnUsers = vpnUsersDao.findByNameAndPassAndPkg(username,password,pkg);  // 根据用户名和密码查找用户信息
                 List<VpnProto.VpnUsers> UsersList = new ArrayList<>();
+                List<VpnProto.VpnSign> signList = new ArrayList<>();
+                List<VpnProto.VpnVerify> verifyList = new ArrayList<>();
                 //判断是否是注册用户
                 if (vpnUsers.size() > 0){
                     Long userId = 0l;
+                    String expiresDate = null;
+                    Date endDate = null;
+                    Date localDate = null;
                     for(VpnUsers item : vpnUsers){
-                        VpnProto.VpnUsers users = new VpnProto.VpnUsers();
                         userId = item.getId();
-                        users.id = item.getId();
-                        users.username = item.getUsername();
-                        users.password = item.getPassword();
-                        users.bundleId = item.getPkg();
-                        users.regtime = item.getRegtime();
-                        UsersList.add(users);
-                    }
-                    List<VpnSign> signlist = vpnSignDao.findByPkgAndUserid(pkg,userId);
-                    List<VpnProto.VpnSign> signList = new ArrayList<>();
-                    for(VpnSign item : signlist){
-                        VpnProto.VpnSign users = new VpnProto.VpnSign();
-                        users.id = item.getId();
-                        users.bundleId = item.getPkg();
-                        users.userId = item.getUserId();
-                        users.begintime = item.getBegintime();
-                        users.type = item.getType();
-                        users.endtime = item.getEndtime();
-                        signList.add(users);
                     }
                     List<VpnPurchase> purchaselist = vpnPurchaseDao.findByPkgAndUserid(pkg,userId);
-                    List<VpnProto.VpnVerify> verifyList = new ArrayList<>();
-                    if (purchaselist.size() > 0){
-                        for(VpnPurchase item : purchaselist){
-                            VpnProto.VpnVerify verify = new VpnProto.VpnVerify();
-                            verify.bundleId = item.getPkg();
-                            verify.userId = item.getUser_id();
-                            verify.quantity = item.getQuantity();
-                            verify.productId = item.getProduct_id();
-                            verify.purchaseDate = item.getPurchase_date();
-                            verify.expiresDate = item.getExpires_date();
-                            verify.md5Receipt = item.getMd5_receipt();
-                            verifyList.add(verify);
+                    if (purchaselist.size() > 0) {  //付费用户
+                        for (VpnPurchase item : purchaselist) {
+                            expiresDate = item.getExpires_date();
                         }
-                    }else {
+                        if (StringUtil.isBlank(localtime)){
+                            localtime = time;
+                        }
+                        endDate = DateUtil.stampStringToDate(expiresDate);  //得到vip账户的到期时间
+                        localDate = DateUtil.stringToDate(localtime);     //得到app用户本地时间
+                        if (endDate.getTime() > localDate.getTime()){   //比较vip用户是否到期 没到期走vip路线
+                            for(VpnUsers item : vpnUsers){
+                                VpnProto.VpnUsers users = new VpnProto.VpnUsers();
+                                userId = item.getId();
+                                users.id = item.getId();
+                                users.username = item.getUsername();
+                                users.password = item.getPassword();
+                                users.bundleId = item.getPkg();
+                                users.regtime = item.getRegtime();
+                                UsersList.add(users);
+                            }
+                            List<VpnSign> signlist = vpnSignDao.findByPkgAndUserid(pkg,userId);
+                            for(VpnSign item : signlist){
+                                VpnProto.VpnSign users = new VpnProto.VpnSign();
+                                users.id = item.getId();
+                                users.bundleId = item.getPkg();
+                                users.userId = item.getUserId();
+                                users.begintime = item.getBegintime();
+                                users.type = item.getType();
+                                users.endtime = item.getEndtime();
+                                signList.add(users);
+                            }
+                            for(VpnPurchase item : purchaselist){
+                                VpnProto.VpnVerify verify = new VpnProto.VpnVerify();
+                                verify.bundleId = item.getPkg();
+                                verify.userId = item.getUser_id();
+                                verify.quantity = item.getQuantity();
+                                verify.productId = item.getProduct_id();
+                                verify.purchaseDate = item.getPurchase_date();
+                                verify.expiresDate = item.getExpires_date();
+                                verify.md5Receipt = item.getMd5_receipt();
+                                verifyList.add(verify);
+                            }
+
+                        }else {     //vip用户已到期，将user表中regtime置为0
+                            int rows = vpnUsersDao.updateRegtime("0",userId,username,password,pkg);
+                            if (rows > 0){
+                                System.out.println("用户 "+userId +" vip时间到期,将regtime置为0");
+                            }
+                            for(VpnUsers item : vpnUsers){
+                                VpnProto.VpnUsers users = new VpnProto.VpnUsers();
+                                userId = item.getId();
+                                users.id = item.getId();
+                                users.username = item.getUsername();
+                                users.password = item.getPassword();
+                                users.bundleId = item.getPkg();
+                                users.regtime = "0";
+                                UsersList.add(users);
+                            }
+                            List<VpnSign> signlist = vpnSignDao.findByPkgAndUserid(pkg,userId);
+                            for(VpnSign item : signlist){
+                                VpnProto.VpnSign users = new VpnProto.VpnSign();
+                                users.id = item.getId();
+                                users.bundleId = item.getPkg();
+                                users.userId = item.getUserId();
+                                users.begintime = item.getBegintime();
+                                users.type = item.getType();
+                                users.endtime = item.getEndtime();
+                                signList.add(users);
+                            }
+                            for(VpnPurchase item : purchaselist){
+                                VpnProto.VpnVerify verify = new VpnProto.VpnVerify();
+                                verify.bundleId = item.getPkg();
+                                verify.userId = item.getUser_id();
+                                verify.quantity = item.getQuantity();
+                                verify.productId = item.getProduct_id();
+                                verify.purchaseDate = item.getPurchase_date();
+                                verify.expiresDate = item.getExpires_date();
+                                verify.md5Receipt = item.getMd5_receipt();
+                                verifyList.add(verify);
+                            }
+                        }
+                    }else{  //免费用户
+                        for(VpnUsers item : vpnUsers){
+                            VpnProto.VpnUsers users = new VpnProto.VpnUsers();
+                            userId = item.getId();
+                            users.id = item.getId();
+                            users.username = item.getUsername();
+                            users.password = item.getPassword();
+                            users.bundleId = item.getPkg();
+                            users.regtime = item.getRegtime();
+                            UsersList.add(users);
+                        }
+                        List<VpnSign> signlist = vpnSignDao.findByPkgAndUserid(pkg,userId);
+                        for(VpnSign item : signlist){
+                            VpnProto.VpnSign users = new VpnProto.VpnSign();
+                            users.id = item.getId();
+                            users.bundleId = item.getPkg();
+                            users.userId = item.getUserId();
+                            users.begintime = item.getBegintime();
+                            users.type = item.getType();
+                            users.endtime = item.getEndtime();
+                            signList.add(users);
+                        }
                         VpnProto.VpnVerify verify = new VpnProto.VpnVerify();
                         verify.bundleId = pkg;
                         verify.userId = userId;
@@ -389,6 +467,7 @@ public class VpnServletImpl extends VpnServlet {
                         verify.md5Receipt = "Invalid";
                         verifyList.add(verify);
                     }
+
                     System.out.println("登录成功 "+ pkg + " " + username + " " + password);
                     response.vpnUsersList = UsersList.toArray(new VpnProto.VpnUsers[0]);
                     response.vpnSignList = signList.toArray(new VpnProto.VpnSign[0]);
@@ -1067,6 +1146,8 @@ public class VpnServletImpl extends VpnServlet {
         String pkg = req.bundleId;
         Long userid = req.userId;
         String regtime = req.regtime;
+        String username = null;
+        String pass = null;
         //苹果客户端传上来的收据,是最原据的收据
         String receipt = req.voucher;
         System.out.println("来自苹果端的验证...");
@@ -1115,8 +1196,25 @@ public class VpnServletImpl extends VpnServlet {
                         //跟苹果的服务器验证成功
                         answer = BuyUtil.STATE_A + "#" + md5_receipt + "_" + product_id + "_" + quantity;
                         //保存到数据库
+                        //为刷新缓存 取出用户名密码 下面更新语句执行
+                        List<VpnUsers> userlist = vpnUsersDao.findById(userid);
+                        for(VpnUsers vps : userlist){
+                            username = vps.getUsername();
+                            pass = vps.getPassword();
+                        }
+                        if (regtime == null || regtime.equals("")){ //当客户端传来的regtime时长为空时，拿product_id判断
+                            if (product_id.contains("one") || product_id.contains("1")){
+                                regtime = "1";
+                            } else if (product_id.contains("three") || product_id.contains("3")){
+                                regtime = "3";
+                            } else if (product_id.contains("six") || product_id.contains("6")) {
+                                regtime = "6";
+                            } else if (product_id.contains("twelve") || product_id.contains("12")){
+                                regtime = "12";
+                            }
+                        }
                         //将注册时长保存到vpn_user表
-                        int nums = vpnUsersDao.updateRegtime(regtime ,userid);
+                        int nums = vpnUsersDao.updateRegtime(regtime ,userid,username,pass,pkg);
                         if (nums > 0) {
                             System.out.println("用户 "+ pkg + " " + userid+ " 付费 " + regtime + " 月");
                         }
@@ -1175,8 +1273,25 @@ public class VpnServletImpl extends VpnServlet {
                             //跟苹果的服务器验证成功
                             answer = BuyUtil.STATE_A + "#" + md5_receipt + "_" + product_id + "_" + quantity;
                             //保存到数据库
+                            //为刷新缓存
+                            List<VpnUsers> userlist = vpnUsersDao.findById(userid);
+                            for(VpnUsers vps : userlist){
+                                username = vps.getUsername();
+                                pass = vps.getPassword();
+                            }
+                            if (regtime == null || regtime.equals("")){ //当客户端传来的regtime时长为空时，拿product_id判断
+                                if (product_id.contains("one") || product_id.contains("1")){
+                                    regtime = "1";
+                                } else if (product_id.contains("three") || product_id.contains("3")){
+                                    regtime = "3";
+                                } else if (product_id.contains("six") || product_id.contains("6")) {
+                                    regtime = "6";
+                                } else if (product_id.contains("twelve") || product_id.contains("12")){
+                                    regtime = "12";
+                                }
+                            }
                             //将注册时长保存到vpn_user表
-                            int nums = vpnUsersDao.updateRegtime(regtime ,userid);
+                            int nums = vpnUsersDao.updateRegtime(regtime ,userid,username,pass,pkg);
                             if (nums > 0) {
                                 System.out.println("用户 "+ pkg + " " + userid+ " 付费 " + regtime + " 月");
                             }

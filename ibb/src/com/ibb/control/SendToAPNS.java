@@ -54,8 +54,8 @@ public class SendToAPNS {
                 tokens.add(ad.getTokens().toString());
             }
         }
-        String path = paths + "music/hanyibo/zypushDis.p12";     //上线正式用
-        //String path = paths + "hanyibo/hybpushDev.p12";      //上线测试用
+        String path = paths + "music/hanyibo/hybpushDis.p12";     //上线正式用
+        //String path = paths + "music/hanyibo/hybpushDev.p12";      //上线测试用
         //String path = "D:\IOS后端内容\iospush\music\hanyibo\hybpushDev.p12";   //本地测试用
         String password = "123456";
         String message = "{'aps':{'alert':'Music without borders, you and I share'}}";
@@ -224,7 +224,7 @@ public class SendToAPNS {
         String pkg = "com.follow.app";
         List<AdTokens> tokenlist = adtokensdao.findByPkg(pkg);
         List<String> tokens= new ArrayList<String>();
-        //tokens.add("");
+        //tokens.add("b40897f7ee0507b1bb0fc05cebff43c459671a930bd49bc9df92aa8b24e8b4cb");
         for(AdTokens ad : tokenlist) {
             if(ad.getPkg().equals(pkg)){
                 tokens.add(ad.getTokens().toString());

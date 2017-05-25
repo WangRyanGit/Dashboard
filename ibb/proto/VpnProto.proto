@@ -62,6 +62,7 @@ message VpnLoginRequest{
     optional string password = 3;   //密码
     optional string idfa = 4;
     optional string geo = 5;
+    optional string localtime = 6;  //app本地时间
 }
 
 message VpnLoginResponse{
